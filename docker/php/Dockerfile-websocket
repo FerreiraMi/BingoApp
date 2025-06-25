@@ -2,4 +2,4 @@ FROM registry.gitlab.com/iw7.com.br/system/apps/bingocontroller/main-php:latest
 
 WORKDIR /var/www/html/
 COPY backend/ /var/www/html
-ENTRYPOINT [ "php", "php server.php" ]
+ENTRYPOINT [ "php", "/var/www/html/server.php" ]
