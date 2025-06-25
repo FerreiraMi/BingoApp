@@ -9,7 +9,7 @@ if (!$shortId) {
     die("ID da sessão não fornecido.");
 }
 
-$apiUrl = "https://app-bingo.iw7.com.br/api/session.php?shortId=" . $shortId;
+$apiUrl = "$HOST_NAME/api/session.php?shortId=" . $shortId;
 $response = @file_get_contents($apiUrl);
 if ($response === FALSE) die("Sessão não encontrada ou erro na API. $shortId");
 
@@ -51,8 +51,8 @@ function getBingoLetter($number) {
         .header h1 { font-size: 3.5vw; margin: 0; color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .header h2 { font-size: 2vw; margin: 0; }
         .last-number-panel { text-align: center; padding: 1vh 0; }
-        .last-number-panel .number-display { font-size: 15vw; line-height: 1; color: #ffd700; text-shadow: 4px 4px 8px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
-        .last-number-panel .letter-display { font-size: 13vw; margin-right: 2vw; opacity: 0.7; color: #e0e1dd; }
+        .last-number-panel .number-display { font-size: 10vw; line-height: 1; color: #ffd700; text-shadow: 4px 4px 8px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
+        .last-number-panel .letter-display { font-size: 8vw; margin-right: 2vw; opacity: 0.7; color: #e0e1dd; }
         .bingo-board { flex-grow: 1; display: flex; justify-content: space-around; gap: 1vw; padding-top: 2vh; border-top: 4px solid #415a77; min-height: 0; }
         .bingo-column { flex: 1; display: flex; flex-direction: column; background-color: #1b263b; border-radius: 15px; padding: 1vw; box-shadow: 0 0 20px rgba(0,0,0,0.3); min-width: 0; }
         .column-header { text-align: center; font-size: 5vw; color: #ffd700; padding-bottom: 1vh; border-bottom: 2px solid #415a77; margin-bottom: 1vh; }
@@ -124,7 +124,7 @@ function getBingoLetter($number) {
         drawnNumbers.forEach(num => addNumberToBoard(num, false));
 
         function connect() {
-            const conn = new WebSocket(`wss://app-bingo-ws.iw7.com.br`);
+            const conn = new WebSocket(`<?=$WSHOST_NAME?>`);
             conn.onopen = () => conn.send(JSON.stringify({ type: 'subscribe', sessionId: sessionId }));
             conn.onclose = () => setTimeout(connect, 1000);
             conn.onerror = () => conn.close();
