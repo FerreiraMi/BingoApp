@@ -33,3 +33,5 @@ pre-build-job:
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile"
       --destination "$IMAGE_PHP"
+      --destination "$IMAGE_LATEST"
+
