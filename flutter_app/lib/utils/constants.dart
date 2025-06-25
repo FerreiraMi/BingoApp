@@ -6,5 +6,5 @@ class AppConstants {
   static const String API_URL = "https://$YOUR_LOCAL_IP/api";
   static const String WEB_PAGE_URL = "https://$YOUR_LOCAL_IP/bingo";
 
-  static const String WEBSOCKET_URL = "ws://app-bingo-ws.iw7.com.br";
+  static const String WEBSOCKET_URL = "wss://app-bingo-ws.iw7.com.br";
 }
