@@ -87,7 +87,7 @@ class BingoControlScreen extends StatelessWidget {
             icon: Icon(Icons.close),
             tooltip: 'Voltar para o histórico (manter sessão ativa)',
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             },
           ),
           title: Consumer<BingoProvider>(
