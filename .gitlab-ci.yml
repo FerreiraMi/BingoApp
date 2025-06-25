@@ -74,7 +74,7 @@ deploy-prod-ws-ho:
   stage: publish
   image: dtzar/helm-kubectl
   needs:
-    - build-job
+    - pre-build-job-ws
   only:
     - main
   when: manual
