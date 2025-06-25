@@ -47,7 +47,9 @@ pre-build-job-ws:
     entrypoint: [""]
   tags:
     - k3s-ho
-
+  only:
+    changes:
+      - backend/*/**
   script:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
@@ -61,8 +63,9 @@ pre-build-job-web:
     entrypoint: [""]
   tags:
     - k3s-ho
-
-
+  only:
+    changes:
+      - backend/*/**
   script:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
