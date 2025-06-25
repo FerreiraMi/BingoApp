@@ -1,6 +1,6 @@
 <?php
 // config/bootstrap.php
-
+require_once __DIR__ . '/vars.php';
 
 // Carrega todas as dependências do Composer.
 // Usamos __DIR__ para criar um caminho absoluto robusto, não importa de onde este arquivo seja incluído.
@@ -8,16 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // Pega a string de conexão do banco de dados da variável de ambiente.
 $mongoDsn = getenv('MONGO_DSN');
-$HOST_NAME = getenv('HOST_NAME');
-$WSHOST_NAME = getenv('WSHOST_NAME');
 
-if ($HOST_NAME === false) {
-    $HOST_NAME = 'https://app-bingo.iw7.com.br'; // Define um valor padrão caso a variável não esteja definida.
-}
-
-if ($WSHOST_NAME === false) {
-    $WSHOST_NAME = 'wss://app-bingo-ws.iw7.com.br'; // Define um valor padrão caso a variável não esteja definida.
-}
 
 // Ponto único de falha: se a variável não estiver definida, a aplicação para.
 if ($mongoDsn === false) {
