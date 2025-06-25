@@ -124,7 +124,7 @@ function getBingoLetter($number) {
         drawnNumbers.forEach(num => addNumberToBoard(num, false));
 
         function connect() {
-            const conn = new WebSocket(`ws://app-bingo-ws.iw7.com.br`);
+            const conn = new WebSocket(`wss://app-bingo-ws.iw7.com.br`);
             conn.onopen = () => conn.send(JSON.stringify({ type: 'subscribe', sessionId: sessionId }));
             conn.onclose = () => setTimeout(connect, 1000);
             conn.onerror = () => conn.close();
