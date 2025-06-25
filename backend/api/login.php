@@ -18,9 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Inclui o autoload do Composer
 require '../vendor/autoload.php';
-
-// Conexão com o MongoDB
-$client = new MongoDB\Client("mongodb://db:27017");
 $usersCollection = $client->bingo_db->users;
 
 // Pega os dados enviados pelo app
