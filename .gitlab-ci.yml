@@ -67,7 +67,7 @@ pre-build-job-web:
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-web"
       --destination "$IMAGE_WEB"
 
-pre-build-job-web:
+pre-build-job-app:
   stage: pre-build
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
@@ -84,7 +84,7 @@ deploy-prod-ws-app:
   stage: publish
   image: dtzar/helm-kubectl
   needs:
-    - pre-build-job-ws
+    - pre-build-job-app
   only:
     - main
   when: manual
