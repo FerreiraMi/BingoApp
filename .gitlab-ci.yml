@@ -28,6 +28,7 @@ pre-build-job:
     entrypoint: [""]
   tags:
     - k3s-ho
+  when: manual
   only:
     changes:
       - docker/php/Dockerfile
@@ -79,4 +80,19 @@ deploy-prod-ws-ho:
   tags:
     - k3s-ho
   script:
-    - helm upgrade --install $APP_NAME helm/websocket --set image.tag=$CI_COMMIT_SHA --set APP_VERSION=$APP_VERSION --set APP_DATE=$CI_PIPELINE_CREATED_AT  --set MONGO_DSN=$MONGO_DSN  --namespace=$APP_NAMESPACE -f helm/websocket/values.yaml
+    - helm upgrade --install $APP_NAME-ws helm/websocket --set image.tag=$CI_COMMIT_SHA --set APP_VERSION=$APP_VERSION --set APP_DATE=$CI_PIPELINE_CREATED_AT  --set MONGO_DSN=$MONGO_DSN  --namespace=$APP_NAMESPACE -f helm/websocket/values.yaml
+
+deploy-prod-ws-web:
+  stage: publish
+  image: dtzar/helm-kubectl
+  needs:
+    - pre-build-job-web
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+  tags:
+    - k3s-ho
+  script:
+    - helm upgrade --install $APP_NAME-web helm/web --set image.tag=$CI_COMMIT_SHA --set APP_VERSION=$APP_VERSION --set APP_DATE=$CI_PIPELINE_CREATED_AT  --set MONGO_DSN=$MONGO_DSN  --namespace=$APP_NAMESPACE -f helm/web/values.yaml
