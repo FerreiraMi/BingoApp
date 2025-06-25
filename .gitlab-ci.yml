@@ -30,7 +30,7 @@ pre-build-job:
 
   script:
     - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/docker/php"
+      --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile"
       --destination "$IMAGE_PHP"
 
