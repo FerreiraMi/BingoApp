@@ -1,7 +1,8 @@
+import 'package:bingou/screens/join_session_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/screens/main_screen.dart';
-import 'package:flutter_app/screens/register_screen.dart';
+import 'package:bingou/providers/auth_provider.dart';
+import 'package:bingou/screens/main_screen.dart';
+import 'package:bingou/screens/register_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bingo Controller - Login'),
+        title: Text('Bingou! - Login'),
         automaticallyImplyLeading: false, // Remove o botão de voltar
       ),
       body: Center(
@@ -99,6 +100,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => RegisterScreen()));
                   },
                   child: Text('Não tem uma conta? Registre-se'),
+                ),
+                SizedBox(height: 16),
+                Divider(),
+                TextButton.icon(
+                  icon: Icon(Icons.visibility),
+                  label: Text('Acompanhar uma sessão como convidado'),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => JoinSessionScreen()),
+                    );
+                  },
                 )
               ],
             ),

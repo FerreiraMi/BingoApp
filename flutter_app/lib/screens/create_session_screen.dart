@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/providers/bingo_provider.dart';
-import 'package:flutter_app/screens/bingo_control_screen.dart';
+import 'package:bingou/providers/auth_provider.dart';
+import 'package:bingou/providers/bingo_provider.dart';
+import 'package:bingou/screens/bingo_control_screen.dart';
 import 'package:provider/provider.dart';
 
 class CreateSessionScreen extends StatefulWidget {

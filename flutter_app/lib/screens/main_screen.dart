@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/create_session_screen.dart';
-import 'package:flutter_app/screens/history_screen.dart';
-import 'package:flutter_app/screens/profile_screen.dart';
+import 'package:bingou/screens/create_session_screen.dart';
+import 'package:bingou/screens/history_screen.dart';
+import 'package:bingou/screens/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
