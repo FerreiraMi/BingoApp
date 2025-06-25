@@ -9,7 +9,7 @@ if (!$shortId) {
     die("ID da sessão não fornecido.");
 }
 
-$apiUrl = "http://webserver/api/session.php?shortId=" . $shortId;
+$apiUrl = "https://app-bingo.iw7.com.br/api/session.php?shortId=" . $shortId;
 $response = @file_get_contents($apiUrl);
 if ($response === FALSE) die("Sessão não encontrada ou erro na API. $shortId");
 
