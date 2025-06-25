@@ -11,6 +11,7 @@ variables:
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest
   IMAGE_PHP: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG-php:latest
+  IMAGE_APP: $CI_REGISTRY_IMAGE/app-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_WS: $CI_REGISTRY_IMAGE/ws-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_WEB: $CI_REGISTRY_IMAGE/web-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
 
@@ -66,6 +67,33 @@ pre-build-job-web:
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-web"
       --destination "$IMAGE_WEB"
 
+pre-build-job-app:
+  stage: pre-build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  tags:
+    - k3s-ho
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-app"
+      --destination "$IMAGE_APP"
+
+deploy-prod-ws-app:
+  stage: publish
+  image: dtzar/helm-kubectl
+  needs:
+    - pre-build-job-app
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+  tags:
+    - k3s-ho
+  script:
+    - helm upgrade --install $APP_NAME-app helm/app --set image.tag=$CI_COMMIT_SHA --set APP_VERSION=$APP_VERSION --set APP_DATE=$CI_PIPELINE_CREATED_AT  --set MONGO_DSN=$MONGO_DSN  --namespace=$APP_NAMESPACE -f helm/app/values.yaml
 
 deploy-prod-ws-ho:
   stage: publish
