@@ -10,6 +10,8 @@ variables:
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest
   IMAGE_PHP: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG-php:latest
+  IMAGE_WS: $CI_REGISTRY_IMAGE/ws-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+  IMAGE_WEB: $CI_REGISTRY_IMAGE/web-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
  
 stages:
   - pre-build
@@ -34,4 +36,39 @@ pre-build-job:
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile"
       --destination "$IMAGE_PHP"
       --destination "$IMAGE_LATEST"
+
+
+pre-build-job-ws:
+  stage: pre-build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  tags:
+    - k3s-ho
+  only:
+    changes:
+      - docker/php/Dockerfile-websocket
+
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-websocket"
+      --destination "$IMAGE_WS"
+
+pre-build-job-web:
+  stage: pre-build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  tags:
+    - k3s-ho
+  only:
+    changes:
+      - docker/php/Dockerfile-web
+
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-web"
+      --destination "$IMAGE_WEB"
 
