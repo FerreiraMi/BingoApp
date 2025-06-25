@@ -1,0 +1,4 @@
+FROM registry.gitlab.com/iw7.com.br/system/anciao/web/main-php:latest
+
+WORKDIR /var/www/html/
+COPY web/ /var/www/html/
