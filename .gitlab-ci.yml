@@ -6,12 +6,14 @@ variables:
   #DOCKER_DRIVER: overlay
   APP_NAME: bingo
   APP_VERSION: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  APP_NAMESPACE: app-bingo
   #APP INFO
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest
   IMAGE_PHP: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG-php:latest
   IMAGE_WS: $CI_REGISTRY_IMAGE/ws-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   IMAGE_WEB: $CI_REGISTRY_IMAGE/web-$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+
  
 stages:
   - pre-build
@@ -45,9 +47,6 @@ pre-build-job-ws:
     entrypoint: [""]
   tags:
     - k3s-ho
-  only:
-    changes:
-      - docker/php/Dockerfile-websocket
 
   script:
     - /kaniko/executor
@@ -62,9 +61,7 @@ pre-build-job-web:
     entrypoint: [""]
   tags:
     - k3s-ho
-  only:
-    changes:
-      - docker/php/Dockerfile-web
+
 
   script:
     - /kaniko/executor
@@ -72,3 +69,18 @@ pre-build-job-web:
       --dockerfile "${CI_PROJECT_DIR}/docker/php/Dockerfile-web"
       --destination "$IMAGE_WEB"
 
+
+deploy-prod-ws-ho:
+  stage: publish
+  image: dtzar/helm-kubectl
+  needs:
+    - build-job
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+  tags:
+    - k3s-ho
+  script:
+    - helm upgrade --install $APP_NAME helm/websocket --set image.tag=$CI_COMMIT_SHA --set APP_VERSION=$APP_VERSION --set APP_DATE=$CI_PIPELINE_CREATED_AT  --set MONGO_DSN=$MONGO_DSN  --namespace=$APP_NAMESPACE -f helm/websocket/values.yaml
