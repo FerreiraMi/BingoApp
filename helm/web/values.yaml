@@ -126,4 +126,4 @@ affinity: {}
 
 envFrom: 
  - secretRef:
-     name: app-secret
+     name: app-secret-web
