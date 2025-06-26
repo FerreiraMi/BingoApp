@@ -21,7 +21,7 @@ class BingoChat implements MessageComponentInterface {
     private $sessionMap;
 
     public function __construct() {
-        require __DIR__ . '/../../config/bootstrap.php';
+        require __DIR__ . '/../config/bootstrap.php';
         
         $this->clients = new \SplObjectStorage;
         $this->connectionData = [];
