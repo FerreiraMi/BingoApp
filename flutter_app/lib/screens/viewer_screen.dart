@@ -16,7 +16,6 @@ class _ViewerScreenState extends State<ViewerScreen> {
   WebSocketChannel? _channel;
   StreamSubscription? _socketSubscription;
 
-  // Estado da sessão
   Map<String, dynamic>? _sessionData;
   List<int> _drawnNumbers = [];
   bool _isLoading = true;
@@ -26,16 +25,14 @@ class _ViewerScreenState extends State<ViewerScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicia o processo de busca e conexão
-    _initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialize();
+    });
   }
 
   Future<void> _initialize() async {
-    // Pede o nome do usuário primeiro
     await _askForName();
-    // Depois busca os dados da sessão
     await _fetchInitialSessionData();
-    // Só então conecta ao WebSocket
     if (_errorMessage.isEmpty) {
       _connectWebSocket();
     }
@@ -50,69 +47,107 @@ class _ViewerScreenState extends State<ViewerScreen> {
         title: Text('Identifique-se'),
         content: TextField(
           controller: nameController,
+          autofocus: true,
           decoration: InputDecoration(hintText: 'Digite seu nome...'),
         ),
         actions: [
           ElevatedButton(
             child: Text('Entrar'),
-            onPressed: () => Navigator.pop(ctx, nameController.text),
+            onPressed: () {
+              if (nameController.text.trim().isNotEmpty) {
+                Navigator.pop(ctx, nameController.text.trim());
+              }
+            },
           )
         ],
       ),
     );
-    if (name != null && name.isNotEmpty) {
+    if (name != null) {
       setState(() => _viewerName = name);
     }
   }
 
   Future<void> _fetchInitialSessionData() async {
+    setState(() => _isLoading = true);
     try {
       final response = await http.get(
         Uri.parse('${AppConstants.API_URL}/session?shortId=${widget.shortId}'),
       );
       if (response.statusCode == 200) {
-        setState(() {
-          _sessionData = json.decode(response.body);
-          _drawnNumbers = List<int>.from(_sessionData!['drawnNumbers'])..sort();
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _sessionData = json.decode(response.body);
+            _drawnNumbers = List<int>.from(_sessionData!['drawnNumbers'])..sort();
+            _isLoading = false;
+          });
+        }
       } else {
-        setState(() {
-          _errorMessage = "Sessão não encontrada ou inválida.";
-          _isLoading = false;
-        });
+        if (mounted) setState(() { _errorMessage = "Sessão não encontrada ou inválida."; _isLoading = false; });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = "Erro de conexão ao buscar sessão.";
-        _isLoading = false;
-      });
+      if (mounted) setState(() { _errorMessage = "Erro de conexão ao buscar sessão."; _isLoading = false; });
     }
   }
 
   void _connectWebSocket() {
-    _channel = WebSocketChannel.connect(Uri.parse(AppConstants.WEBSOCKET_URL));
-    _socketSubscription = _channel!.stream.listen(
-      (message) {
-        final data = json.decode(message);
-        if (data['type'] == 'new_number') {
-          final newNumber = data['number'] as int;
-          if (mounted && !_drawnNumbers.contains(newNumber)) {
-            setState(() { _drawnNumbers.add(newNumber); _drawnNumbers.sort(); });
+    if (_sessionData == null) return;
+    try {
+      _channel = WebSocketChannel.connect(Uri.parse(AppConstants.WEBSOCKET_URL));
+      _socketSubscription = _channel!.stream.listen(
+        (message) {
+          final data = json.decode(message);
+          if (data['type'] == 'new_number') {
+            final newNumber = data['number'] as int;
+            if (mounted && !_drawnNumbers.contains(newNumber)) {
+              setState(() { _drawnNumbers.add(newNumber); });
+            }
           }
-        }
-      },
-      onDone: () => setState(() => _errorMessage = "Conexão encerrada."),
-      onError: (error) => setState(() => _errorMessage = "Erro de conexão."),
-    );
+          // Opcional: ouvir por outros eventos, como 'bingo_called' para mostrar um alerta aqui também
+        },
+        onDone: () { if(mounted) setState(() => _errorMessage = "Conexão encerrada."); },
+        onError: (error) { if(mounted) setState(() => _errorMessage = "Erro de conexão."); },
+      );
 
-    // Envia a mensagem de que um novo espectador entrou
-    _channel!.sink.add(json.encode({
-      'type': 'viewer_joined',
-      'sessionId': widget.shortId,
-      'viewerName': _viewerName,
-    }));
+      _channel!.sink.add(json.encode({
+        'type': 'viewer_joined',
+        'sessionId': widget.shortId,
+        'viewerName': _viewerName,
+      }));
+    } catch (e) {
+      if(mounted) setState(() => _errorMessage = "Não foi possível conectar ao servidor de tempo real.");
+    }
   }
+
+  // ===============================================
+  // NOVO MÉTODO PARA CHAMAR O BINGO
+  // ===============================================
+  void _callBingo() {
+    if (_channel != null) {
+      // O backend espera o ID longo para salvar os ganhadores.
+      // Precisamos enviar o ID longo da sessão.
+      final longSessionId = _sessionData?['_id'];
+      if (longSessionId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: ID da sessão não encontrado.')));
+          return;
+      }
+      
+      _channel!.sink.add(json.encode({
+        'type': 'bingo_called',
+        'sessionId': longSessionId,
+        'winners': [_viewerName], // Envia o nome do espectador como um ganhador
+      }));
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('BINGO! Seu chamado foi enviado.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Não foi possível enviar. Verifique sua conexão.')));
+    }
+  }
+
 
   @override
   void dispose() {
@@ -125,6 +160,19 @@ class _ViewerScreenState extends State<ViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_sessionData?['sessionName'] ?? 'Acompanhando Bingo')),
+      // ===============================================
+      // BOTÃO FLUTUANTE DE BINGO ADICIONADO
+      // ===============================================
+      floatingActionButton: _isLoading || _errorMessage.isNotEmpty
+        ? null // Não mostra o botão se estiver carregando ou com erro
+        : FloatingActionButton.extended(
+            onPressed: _callBingo,
+            label: Text('BINGO!', style: TextStyle(fontWeight: FontWeight.bold)),
+            icon: Icon(Icons.celebration),
+            backgroundColor: Colors.amber,
+          ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
@@ -150,13 +198,14 @@ class _ViewerScreenState extends State<ViewerScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 70), // Espaço para o FloatingActionButton não cobrir o conteúdo
                   ],
                 ),
     );
   }
 
   Widget _buildBingoColumn(String letter, int start, int end) {
-    final columnNumbers = _drawnNumbers.where((n) => n >= start && n <= end).toList();
+    final drawnNumbersInColumn = _drawnNumbers.where((n) => n >= start && n <= end).toList()..sort();
     return Expanded(
       child: Column(
         children: [
@@ -164,26 +213,26 @@ class _ViewerScreenState extends State<ViewerScreen> {
           SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
-              itemCount: 15, // Sempre mostra 15 posições
+              padding: EdgeInsets.zero,
+              itemCount: drawnNumbersInColumn.length,
               itemBuilder: (context, index) {
-                final number = start + index;
-                final isDrawn = columnNumbers.contains(number);
+                final number = drawnNumbersInColumn[index];
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: CircleAvatar(
                       radius: 18,
-                      backgroundColor: isDrawn ? Colors.green : Colors.grey[300],
+                      backgroundColor: Colors.green.shade600,
                       child: Text(
                         number.toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold, color: isDrawn ? Colors.white : Colors.black54),
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
                       ),
                     ),
                   ),
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );
