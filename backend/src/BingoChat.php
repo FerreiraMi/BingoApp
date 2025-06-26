@@ -8,163 +8,143 @@ use MongoDB\Client;
 class BingoChat implements MessageComponentInterface {
     protected $clients;
     private $db;
-    private $sessions;
-    private $connectionData;
+    
+    // Mapeamento: resourceId => ['shortId' => ..., 'viewerName' => ...]
+    // Unificamos 'sessionId' para ser sempre o 'shortId' para rastreamento de conexão.
+    private $connectionData; 
+    
+    // Mapeamento: shortId => [ resourceId => 'viewerName', ... ]
     private $sessionViewers;
 
-
     public function __construct() {
-
-        require __DIR__ . '/../config/bootstrap.php';
+        require __DIR__ . '/../../config/bootstrap.php';
         
         $this->clients = new \SplObjectStorage;
-        $this->sessions = [];
-         $this->connectionData = [];
+        $this->connectionData = [];
         $this->sessionViewers = [];
 
-        
-    
-       // A variável $client é criada pelo arquivo bootstrap.php
-        // Nós a usamos para selecionar o banco de dados.
         $this->db = $client->selectDatabase('bingo_db');
-
-        echo "Servidor WebSocket iniciado e conectado ao MongoDB.\n";
+        $this->logMessage("Servidor WebSocket iniciado e conectado ao MongoDB.", null);
     }
 
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
-        $this->connectionData[$conn->resourceId] = ['sessionId' => null, 'viewerName' => null];
-        echo "Nova conexão! ({$conn->resourceId})\n";
+        $this->connectionData[$conn->resourceId] = ['shortId' => null, 'viewerName' => null];
+        $this->logMessage("Nova conexão!", $conn);
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $data = json_decode($msg, true);
         $resourceId = $from->resourceId;
         
-        // Tipo: Inscrição da página web
-        if (isset($data['type']) && $data['type'] === 'subscribe') {
-            $shortId = $data['sessionId'];
-            $this->connectionData[$resourceId]['sessionId'] = $shortId;
-            $this->broadcastViewerList($shortId); // Envia a lista atual de espectadores para a nova página web conectada
-            echo "Página web ({$resourceId}) inscrita na sessão {$shortId}\n";
-            return;
-        }
-        
-        // Tipo: Novo espectador do app se juntou
-        if (isset($data['type']) && $data['type'] === 'viewer_joined') {
-            $shortId = $data['sessionId'];
-            $viewerName = $data['viewerName'];
+        // Roteamento de mensagens baseado no 'type'
+        switch ($data['type'] ?? '') {
+            case 'subscribe':
+                $shortId = $data['sessionId'];
+                $this->connectionData[$resourceId]['shortId'] = $shortId;
+                $this->broadcastViewerList($shortId);
+                $this->logMessage("Página web inscrita na sessão {$shortId}", $from);
+                break;
 
-            $this->connectionData[$resourceId]['sessionId'] = $shortId;
-            $this->connectionData[$resourceId]['viewerName'] = $viewerName;
+            case 'viewer_joined':
+                $shortId = $data['sessionId'];
+                $viewerName = $data['viewerName'];
+                $this->connectionData[$resourceId]['shortId'] = $shortId;
+                $this->connectionData[$resourceId]['viewerName'] = $viewerName;
 
-            // Adiciona o espectador à lista da sessão
-            if (!isset($this->sessionViewers[$shortId])) {
-                $this->sessionViewers[$shortId] = [];
-            }
-            $this->sessionViewers[$shortId][$resourceId] = $viewerName;
-
-            echo "Espectador '{$viewerName}' ({$resourceId}) entrou na sessão {$shortId}\n";
-            $this->broadcastViewerList($shortId); // Notifica todos sobre a mudança na lista
-            return;
-        }
-
-
-        // Mensagem de redirecionamento enviada pelo app Flutter
-        if (isset($data['type']) && $data['type'] === 'redirect') {
-            $targetSessionId = $data['targetSessionId'];
-            $newUrl = $data['newUrl'];
-            
-            echo "Comando de redirect recebido para a sessão {$targetSessionId}\n";
-            
-            // Transmite o comando de redirect apenas para os clientes da sessão antiga
-            foreach ($this->clients as $client) {
-                if (isset($this->sessions[$client->resourceId]) && $this->sessions[$client->resourceId] === $targetSessionId) {
-                    $client->send(json_encode([
-                        'type' => 'redirect',
-                        'targetSessionId' => $targetSessionId,
-                        'newUrl' => $newUrl
-                    ]));
+                if (!isset($this->sessionViewers[$shortId])) {
+                    $this->sessionViewers[$shortId] = [];
                 }
-            }
-            return;
-        }
-
-        if (isset($data['type']) && $data['type'] === 'bingo_called') {
-            $sessionId = $data['sessionId'];
-            $winners = $data['winners'] ?? [];
-
-            if (!empty($winners)) {
-                $this->db->sessions->updateOne(
-                    ['_id' => new \MongoDB\BSON\ObjectId($sessionId)],
-                    ['$set' => ['winners' => $winners]]
-                );
-            }
-
-            echo "Bingo chamado para a sessão {$sessionId} por: " . implode(', ', $winners) . "!\n";
-
-            // Transmite a mensagem de bingo para todos os clientes daquela sessão
-            foreach ($this->clients as $client) {
-                if (isset($this->sessions[$client->resourceId]) && $this->sessions[$client->resourceId] === $sessionId) {
-                    $client->send(json_encode(['type' => 'bingo_called', 'winners' => $winners]));
-                }
-            }
-            return; // Encerra o processamento para esta mensagem
-        }
-
-        // Mensagem de um cliente web se inscrevendo em uma sessão
-        if (isset($data['type']) && $data['type'] === 'subscribe' && isset($data['sessionId'])) {
-            $this->sessions[$from->resourceId] = $data['sessionId'];
-            echo "Conexão {$from->resourceId} inscrita na sessão {$data['sessionId']}\n";
-            return;
-        }
-
-        // Mensagem do app Flutter com novo número
-        if (isset($data['sessionId']) && isset($data['number'])) {
-            $sessionId = $data['sessionId'];
-            $number = (int)$data['number'];
-
-            try {
-                $this->db->sessions->updateOne(
-                    ['_id' => new \MongoDB\BSON\ObjectId($sessionId)],
-                    ['$addToSet' => ['drawnNumbers' => $number]]
-                );
-            } catch (\Exception $e) {
-                 echo "Erro ao salvar no MongoDB: " . $e->getMessage() . "\n";
-                 return;
-            }
+                $this->sessionViewers[$shortId][$resourceId] = $viewerName;
+                $this->logMessage("Espectador '{$viewerName}' entrou na sessão {$shortId}", $from);
+                $this->broadcastViewerList($shortId);
+                break;
             
-            echo "Número {$number} recebido para a sessão {$sessionId}. Transmitindo...\n";
+            case 'redirect':
+                // A lógica de redirect precisa de um mapeamento entre shortId e os clientes.
+                // Esta lógica funcionará se os clientes que precisam ser redirecionados
+                // também se inscreverem com um 'subscribe'.
+                $targetShortId = $data['targetSessionId']; // Assumindo que o app manda o shortId
+                $newUrl = $data['newUrl'];
+                $this->logMessage("Comando de redirect para sessão {$targetShortId}", $from);
+                $this->broadcastToSession($targetShortId, json_encode($data));
+                break;
+                
+            case 'bingo_called':
+                $longSessionId = $data['sessionId'];
+                $winners = $data['winners'] ?? [];
 
-            // Envia a atualização apenas para os clientes inscritos na sessão correta
-            foreach ($this->clients as $client) {
-                if (isset($this->sessions[$client->resourceId]) && $this->sessions[$client->resourceId] === $sessionId) {
-                    $client->send(json_encode(['type' => 'new_number', 'number' => $number]));
+                // Buscamos o shortId a partir do longId para saber para quem transmitir
+                $sessionDoc = $this->db->sessions->findOne(['_id' => new \MongoDB\BSON\ObjectId($longSessionId)], ['projection' => ['shortId' => 1]]);
+                if ($sessionDoc) {
+                    $shortId = $sessionDoc['shortId'];
+                    if (!empty($winners)) {
+                        $this->db->sessions->updateOne(['_id' => new \MongoDB\BSON\ObjectId($longSessionId)], ['$set' => ['winners' => $winners]]);
+                    }
+                    $this->logMessage("Bingo chamado para sessão {$shortId} por: " . implode(', ', $winners), $from);
+                    $this->broadcastToSession($shortId, json_encode(['type' => 'bingo_called', 'winners' => $winners]));
                 }
-            }
+                break;
+
+            case 'new_number': // O default case, sem 'type' explícito na mensagem original
+                $longSessionId = $data['sessionId'];
+                $number = (int)$data['number'];
+
+                // Novamente, buscamos o shortId para transmitir
+                $sessionDoc = $this->db->sessions->findOne(['_id' => new \MongoDB\BSON\ObjectId($longSessionId)], ['projection' => ['shortId' => 1]]);
+                if ($sessionDoc) {
+                    $shortId = $sessionDoc['shortId'];
+                    try {
+                        $this->db->sessions->updateOne(['_id' => new \MongoDB\BSON\ObjectId($longSessionId)], ['$addToSet' => ['drawnNumbers' => $number]]);
+                        $this->logMessage("Número {$number} recebido para sessão {$shortId}", $from);
+                        $this->broadcastToSession($shortId, json_encode(['type' => 'new_number', 'number' => $number]));
+                    } catch (\Exception $e) {
+                        $this->logMessage("Erro ao salvar no MongoDB: " . $e->getMessage(), $from);
+                    }
+                }
+                break;
         }
     }
 
     public function onClose(ConnectionInterface $conn) {
-        unset($this->sessions[$conn->resourceId]);
+        $resourceId = $conn->resourceId;
+        if (isset($this->connectionData[$resourceId])) {
+            $shortId = $this->connectionData[$resourceId]['shortId'];
+            $viewerName = $this->connectionData[$resourceId]['viewerName'];
+            
+            if ($shortId && $viewerName) {
+                unset($this->sessionViewers[$shortId][$resourceId]);
+                $this->logMessage("Espectador '{$viewerName}' saiu da sessão {$shortId}", $conn);
+                $this->broadcastViewerList($shortId);
+            }
+            
+            unset($this->connectionData[$resourceId]);
+        }
         $this->clients->detach($conn);
-        echo "Conexão {$conn->resourceId} foi desconectada.\n";
+        $this->logMessage("Conexão desconectada.", $conn);
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "Ocorreu um erro: {$e->getMessage()}\n";
+        $this->logMessage("Ocorreu um erro: {$e->getMessage()}", $conn);
         $conn->close();
     }
 
-    // Nova função auxiliar para transmitir a lista de espectadores
-    private function broadcastViewerList($shortId) {
-        $viewers = isset($this->sessionViewers[$shortId]) ? array_values($this->sessionViewers[$shortId]) : [];
-        $payload = json_encode(['type' => 'viewer_list_update', 'viewers' => $viewers]);
-
+    private function broadcastToSession($shortId, $payload) {
         foreach ($this->clients as $client) {
-            if (isset($this->connectionData[$client->resourceId]) && $this->connectionData[$client->resourceId]['sessionId'] === $shortId) {
+            if (isset($this->connectionData[$client->resourceId]) && $this->connectionData[$client->resourceId]['shortId'] === $shortId) {
                 $client->send($payload);
             }
         }
+    }
+
+    private function broadcastViewerList($shortId) {
+        $viewers = isset($this->sessionViewers[$shortId]) ? array_values($this->sessionViewers[$shortId]) : [];
+        $payload = json_encode(['type' => 'viewer_list_update', 'viewers' => $viewers]);
+        $this->broadcastToSession($shortId, $payload);
+    }
+
+    private function logMessage($message, ?ConnectionInterface $conn) {
+        $ip = $conn ? $conn->remoteAddress : 'SERVER';
+        echo date("Y-m-d H:i:s") . " [{$ip}] " . $message . "\n";
     }
 }
