@@ -9,6 +9,9 @@ class BingoChat implements MessageComponentInterface {
     protected $clients;
     private $db;
     private $sessions;
+    private $connectionData;
+    private $sessionViewers;
+
 
     public function __construct() {
 
@@ -16,7 +19,10 @@ class BingoChat implements MessageComponentInterface {
         
         $this->clients = new \SplObjectStorage;
         $this->sessions = [];
+         $this->connectionData = [];
+        $this->sessionViewers = [];
 
+        
     
        // A variável $client é criada pelo arquivo bootstrap.php
         // Nós a usamos para selecionar o banco de dados.
@@ -27,12 +33,43 @@ class BingoChat implements MessageComponentInterface {
 
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
+        $this->connectionData[$conn->resourceId] = ['sessionId' => null, 'viewerName' => null];
         echo "Nova conexão! ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $data = json_decode($msg, true);
+        $resourceId = $from->resourceId;
         
+        // Tipo: Inscrição da página web
+        if (isset($data['type']) && $data['type'] === 'subscribe') {
+            $shortId = $data['sessionId'];
+            $this->connectionData[$resourceId]['sessionId'] = $shortId;
+            $this->broadcastViewerList($shortId); // Envia a lista atual de espectadores para a nova página web conectada
+            echo "Página web ({$resourceId}) inscrita na sessão {$shortId}\n";
+            return;
+        }
+        
+        // Tipo: Novo espectador do app se juntou
+        if (isset($data['type']) && $data['type'] === 'viewer_joined') {
+            $shortId = $data['sessionId'];
+            $viewerName = $data['viewerName'];
+
+            $this->connectionData[$resourceId]['sessionId'] = $shortId;
+            $this->connectionData[$resourceId]['viewerName'] = $viewerName;
+
+            // Adiciona o espectador à lista da sessão
+            if (!isset($this->sessionViewers[$shortId])) {
+                $this->sessionViewers[$shortId] = [];
+            }
+            $this->sessionViewers[$shortId][$resourceId] = $viewerName;
+
+            echo "Espectador '{$viewerName}' ({$resourceId}) entrou na sessão {$shortId}\n";
+            $this->broadcastViewerList($shortId); // Notifica todos sobre a mudança na lista
+            return;
+        }
+
+
         // Mensagem de redirecionamento enviada pelo app Flutter
         if (isset($data['type']) && $data['type'] === 'redirect') {
             $targetSessionId = $data['targetSessionId'];
@@ -117,5 +154,17 @@ class BingoChat implements MessageComponentInterface {
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "Ocorreu um erro: {$e->getMessage()}\n";
         $conn->close();
+    }
+
+    // Nova função auxiliar para transmitir a lista de espectadores
+    private function broadcastViewerList($shortId) {
+        $viewers = isset($this->sessionViewers[$shortId]) ? array_values($this->sessionViewers[$shortId]) : [];
+        $payload = json_encode(['type' => 'viewer_list_update', 'viewers' => $viewers]);
+
+        foreach ($this->clients as $client) {
+            if (isset($this->connectionData[$client->resourceId]) && $this->connectionData[$client->resourceId]['sessionId'] === $shortId) {
+                $client->send($payload);
+            }
+        }
     }
 }

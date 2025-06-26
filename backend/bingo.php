@@ -83,6 +83,22 @@ function getBingoLetter($number) {
             text-shadow: 2px 2px 4px #000;
         }
 
+        .viewers-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(27, 38, 59, 0.8);
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 250px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #415a77;
+        }
+        .viewers-panel h4 { margin: 0 0 10px 0; color: #fff; }
+        .viewers-panel ul { margin: 0; padding: 0 0 0 20px; }
+        .viewers-panel li { font-size: 1em; padding: 2px 0; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomInAndShake { 0% { transform: scale(0.1); } 50% { transform: scale(1.1); } 70% { transform: scale(0.9) rotate(-3deg); } 80% { transform: scale(1.05) rotate(3deg); } 100% { transform: scale(1) rotate(0); } }
         
@@ -94,6 +110,14 @@ function getBingoLetter($number) {
         <header class="header"><h1><?php echo htmlspecialchars($sessionData['sessionName']); ?></h1><h2>Rodada: <?php echo htmlspecialchars($sessionData['round']); ?> | Prêmio: <?php echo htmlspecialchars($sessionData['prize']); ?></h2></header>
         <div class="last-number-panel"><div id="last-number-display" class="number-display"><span id="last-letter-display" class="letter-display"><?php echo getBingoLetter(end($drawnNumbers)); ?></span><span id="last-number-content"><?php echo end($drawnNumbers) ?: '-'; ?></span></div></div>
         <main class="bingo-board"><div class="bingo-column" id="col-B"><div class="column-header">B</div><div class="numbers-container"></div></div><div class="bingo-column" id="col-I"><div class="column-header">I</div><div class="numbers-container"></div></div><div class="bingo-column" id="col-N"><div class="column-header">N</div><div class="numbers-container"></div></div><div class="bingo-column" id="col-G"><div class="column-header">G</div><div class="numbers-container"></div></div><div class="bingo-column" id="col-O"><div class="column-header">O</div><div class="numbers-container"></div></div></main>
+    </div>
+
+    <!-- NOVO HTML para a lista de espectadores -->
+    <div class="viewers-panel">
+        <h4>Espectadores Online</h4>
+        <ul id="viewers-list">
+            <li>Ninguém online...</li>
+        </ul>
     </div>
 
     <div id="bingo-alert-overlay">
@@ -160,7 +184,22 @@ function getBingoLetter($number) {
                         if (Date.now() < end) requestAnimationFrame(frame);
                     }());
                     setTimeout(() => { overlay.style.display = 'none'; }, duration);
+                    
+                } else if (data.type === 'viewer_list_update') {
+                const viewersList = document.getElementById('viewers-list');
+                viewersList.innerHTML = ''; // Limpa a lista
+                if (data.viewers && data.viewers.length > 0) {
+                    data.viewers.forEach(name => {
+                        const li = document.createElement('li');
+                        li.textContent = name;
+                        viewersList.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'Ninguém online...';
+                    viewersList.appendChild(li);
                 }
+            }
             };
         }
         connect();
