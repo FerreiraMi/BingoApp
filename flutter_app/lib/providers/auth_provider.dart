@@ -1,9 +1,9 @@
-// flutter_app/lib/providers/auth_provider.dart
+// bingou/lib/providers/auth_provider.dart
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_app/utils/constants.dart';
+import 'package:bingou/utils/constants.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _userId;
@@ -84,10 +84,13 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> fetchHistory() async {
-    if (_userId == null) return;
+    if (_userId == null) {
+       history = [];
+       return;
+    }
     
-    isLoading = true;
-    notifyListeners();
+    //isLoading = true;
+    //notifyListeners();
 
     try {
       final response = await http.get(
@@ -102,7 +105,7 @@ class AuthProvider with ChangeNotifier {
       errorMessage = "Erro de conexão ao buscar histórico.";
     }
     
-    isLoading = false;
+    //isLoading = false;
     notifyListeners();
   }
   

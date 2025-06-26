@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main.dart'; // Importamos o AuthWrapper
+import 'package:bingou/main.dart'; // Importamos o AuthWrapper
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -23,18 +23,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo,
+      backgroundColor: Color.fromRGBO(245, 204, 111, 1.0), // Cor de fundo amarela
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Substitua Icon por sua logo: Image.asset('assets/logo.png')
-            Icon(Icons.casino, size: 100, color: Colors.white),
-            SizedBox(height: 20),
-            Text(
-              'Bingo Controller',
-              style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+            Image.asset('assets/logo.png'),
+            //Icon(Icons.casino, size: 100, color: Colors.white),
+          
           ],
         ),
       ),

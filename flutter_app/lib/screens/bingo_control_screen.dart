@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_app/providers/bingo_provider.dart';
-import 'package:flutter_app/screens/create_session_screen.dart';
-import 'package:flutter_app/utils/constants.dart';
+import 'package:bingou/providers/bingo_provider.dart';
+import 'package:bingou/screens/create_session_screen.dart';
+import 'package:bingou/utils/constants.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class BingoControlScreen extends StatelessWidget {
   @override
@@ -82,12 +83,11 @@ class BingoControlScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          // CORRIGIDO: Este botão agora apenas volta, sem encerrar a sessão
           leading: IconButton(
             icon: Icon(Icons.close),
             tooltip: 'Voltar para o histórico (manter sessão ativa)',
             onPressed: () {
-              Navigator.of(context).pop(true);
+              Navigator.of(context).pop();
             },
           ),
           title: Consumer<BingoProvider>(
@@ -98,31 +98,75 @@ class BingoControlScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Painel de Compartilhamento da URL
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Consumer<BingoProvider>(
-                        builder: (ctx, provider, _) => Text('URL para compartilhar:\n${AppConstants.WEB_PAGE_URL}/${provider.shortSessionId ?? ''}', style: TextStyle(fontSize: 12)),
+              GestureDetector(
+                onTap: () {
+                  final shareUrl = '${AppConstants.WEB_PAGE_URL}/${bingoProvider.shortSessionId ?? ''}';
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Aponte a câmera para o QR Code', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
+                          SizedBox(height: 20),
+                          SizedBox(
+                            width: 200,
+                            height: 200,
+                            // ===============================================
+                            // CORREÇÃO FINAL E DEFINITIVA AQUI
+                            // ===============================================
+                            child: QrImageView(
+                              data: shareUrl,
+                              version: QrVersions.auto,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          SelectableText(shareUrl, style: TextStyle(fontSize: 12)),
+                          SizedBox(height: 20),
+
+                          // Botão para copiar o link
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.copy, size: 18),
+                            label: Text('Copiar Link'),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(text: shareUrl));
+                              Navigator.of(ctx).pop(); // Fecha o diálogo
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Link copiado para a área de transferência!')));
+                            },
+                          )
+                          //end
+                        ],
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.copy),
-                      onPressed: () {
-                        final shareUrl = '${AppConstants.WEB_PAGE_URL}/${bingoProvider.shortSessionId ?? ''}';
-                        Clipboard.setData(ClipboardData(text: shareUrl));
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('URL copiada!'), duration: Duration(seconds: 1)));
-                      },
-                    )
-                  ],
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Código da Sessão:', style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                            Consumer<BingoProvider>(
+                              builder: (ctx, provider, _) => Text(
+                                provider.shortSessionId ?? '...',
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.qr_code_2_rounded, size: 48, color: Colors.indigo),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 20),
-
-              // Controles de Sorteio (Aleatório e Manual)
+              // O resto do código permanece exatamente o mesmo
+              // ...
               Row(
                 children: [
                   Expanded(child: ElevatedButton(onPressed: bingoProvider.drawRandomNumber, child: Text('SORTEAR'), style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 16)))),
@@ -140,15 +184,11 @@ class BingoControlScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20),
-
-              // Painel de Status (Último número e contagem)
               Text('Último número sorteado:', style: TextStyle(fontSize: 16)),
               Selector<BingoProvider, int?>(selector: (ctx, provider) => provider.drawnNumbers.isNotEmpty ? provider.drawnNumbers.last : null, builder: (ctx, lastNumber, _) => Text('${lastNumber ?? '-'}', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold))),
               SizedBox(height: 10),
               Selector<BingoProvider, int>(selector: (ctx, provider) => provider.availableNumbers.length, builder: (ctx, count, _) => Text('$count números restantes')),
               Divider(height: 30),
-
-              // Grid de Números Sorteados
               Expanded(
                 child: Consumer<BingoProvider>(
                   builder: (ctx, provider, _) {
@@ -163,19 +203,15 @@ class BingoControlScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10),
-              
-              // Botão BINGO! agora chama o novo diálogo
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   child: Padding(padding: const EdgeInsets.symmetric(vertical: 16.0), child: Text('BINGO!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
-                  onPressed: _showBingoWinnerDialog, // Atualizado
+                  onPressed: _showBingoWinnerDialog,
                 ),
               ),
               SizedBox(height: 10),
-              
-              // Botões de Ação na parte inferior (com o botão de encerrar permanente)
               Row(
                 children: [
                   Expanded(

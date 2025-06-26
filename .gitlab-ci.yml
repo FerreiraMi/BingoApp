@@ -87,7 +87,7 @@ deploy-prod-ws-app:
     - pre-build-job-app
   only:
     - main
-  when: manual
+  #when: manual
   environment:
     name: production
   tags:
@@ -102,7 +102,7 @@ deploy-prod-ws-ho:
     - pre-build-job-ws
   only:
     - main
-  when: manual
+  #when: manual
   environment:
     name: production
   tags:
@@ -117,7 +117,7 @@ deploy-prod-ws-web:
     - pre-build-job-web
   only:
     - main
-  when: manual
+  #when: manual
   environment:
     name: production
   tags:

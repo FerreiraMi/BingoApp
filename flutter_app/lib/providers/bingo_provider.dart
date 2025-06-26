@@ -1,10 +1,10 @@
-// flutter_app/lib/providers/bingo_provider.dart
+// bingou/lib/providers/bingo_provider.dart
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:flutter_app/utils/constants.dart';
+import 'package:bingou/utils/constants.dart';
 
 class BingoProvider with ChangeNotifier {
   String? sessionId;
