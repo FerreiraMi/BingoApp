@@ -10,8 +10,17 @@ if (!$shortId) {
     die("ID da sessão não fornecido.");
 }
 
-$apiUrl = "$HOST_NAME/api/session.php?shortId=" . $shortId;
-$response = @file_get_contents($apiUrl);
+$apiUrl = trim("$HOST_NAME/api/session.php?shortId=" . $shortId);
+//echo "$apiUrl<br/>";
+//$response = @file_get_contents($apiUrl);
+
+$ch = curl_init($apiUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+if (curl_errno($ch)) {
+    die("Erro ao acessar a API: " . curl_error($ch));
+}
+curl_close($ch);
 if ($response === FALSE) die("Sessão não encontrada ou erro na API. $shortId");
 
 $sessionData = json_decode($response, true);
@@ -132,6 +141,7 @@ function getBingoLetter($number) {
     -->
     <script>
         const sessionId = "<?php echo $sessionId; ?>";
+        const shortId   = "<?php echo $shortId; ?>";
         let drawnNumbers = <?php echo json_encode($drawnNumbers); ?>;
         
         function getBingoLetter(number) { if (number >= 1 && number <= 15) return 'B'; if (number >= 16 && number <= 30) return 'I'; if (number >= 31 && number <= 45) return 'N'; if (number >= 46 && number <= 60) return 'G'; if (number >= 61 && number <= 75) return 'O'; return ''; }
@@ -150,11 +160,12 @@ function getBingoLetter($number) {
 
         function connect() {
             const conn = new WebSocket(`<?=$WSHOST_NAME?>`);
-            conn.onopen = () => conn.send(JSON.stringify({ type: 'subscribe', sessionId: sessionId }));
+            conn.onopen = () => conn.send(JSON.stringify({ type: 'subscribe', sessionId: sessionId, shortId: shortId }));
             conn.onclose = () => setTimeout(connect, 1000);
             conn.onerror = () => conn.close();
             conn.onmessage = function(e) {
                 const data = JSON.parse(e.data);
+                console.log('Mensagem recebida:', data);
                 if (data.type === 'redirect' && data.targetSessionId === sessionId) { window.location.href = data.newUrl; }
                 else if (data.type === 'new_number') {
                     const newNumber = data.number;

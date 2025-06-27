@@ -27,7 +27,7 @@ if ($method === 'POST') {
     }
 
     // GERA O ID CURTO E ÚNICO
-    $shortId = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5);
+    $shortId = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5);
     // Em produção, você adicionaria um loop aqui para garantir a unicidade:
     while ($collection->countDocuments(['shortId' => $shortId]) > 0) {
          $shortId = substr(str_shuffle('...'), 0, 5);

@@ -17,6 +17,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
   StreamSubscription? _socketSubscription;
 
   Map<String, dynamic>? _sessionData;
+  int? _lastDrawnNumber;
   List<int> _drawnNumbers = [];
   bool _isLoading = true;
   String _errorMessage = '';
@@ -78,6 +79,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
           setState(() {
             _sessionData = json.decode(response.body);
             _drawnNumbers = List<int>.from(_sessionData!['drawnNumbers'])..sort();
+            _lastDrawnNumber = _drawnNumbers.isNotEmpty ? _drawnNumbers.last : null;
             _isLoading = false;
           });
         }
@@ -99,7 +101,10 @@ class _ViewerScreenState extends State<ViewerScreen> {
           if (data['type'] == 'new_number') {
             final newNumber = data['number'] as int;
             if (mounted && !_drawnNumbers.contains(newNumber)) {
-              setState(() { _drawnNumbers.add(newNumber); });
+              setState(() { 
+                _drawnNumbers.add(newNumber);
+                _lastDrawnNumber = newNumber;
+              });
             }
           }
           // Opcional: ouvir por outros eventos, como 'bingo_called' para mostrar um alerta aqui também
@@ -110,7 +115,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
 
       _channel!.sink.add(json.encode({
         'type': 'viewer_joined',
-        'sessionId': widget.shortId,
+        'shortId': widget.shortId,
         'viewerName': _viewerName,
       }));
     } catch (e) {
@@ -148,6 +153,16 @@ class _ViewerScreenState extends State<ViewerScreen> {
     }
   }
 
+  String _getBingoLetter(int? number) {
+    if (number == null) return '';
+    if (number >= 1 && number <= 15) return 'B';
+    if (number >= 16 && number <= 30) return 'I';
+    if (number >= 31 && number <= 45) return 'N';
+    if (number >= 46 && number <= 60) return 'G';
+    if (number >= 61 && number <= 75) return 'O';
+    return '';
+  }
+
 
   @override
   void dispose() {
@@ -163,14 +178,14 @@ class _ViewerScreenState extends State<ViewerScreen> {
       // ===============================================
       // BOTÃO FLUTUANTE DE BINGO ADICIONADO
       // ===============================================
-      floatingActionButton: _isLoading || _errorMessage.isNotEmpty
-        ? null // Não mostra o botão se estiver carregando ou com erro
-        : FloatingActionButton.extended(
-            onPressed: _callBingo,
-            label: Text('BINGO!', style: TextStyle(fontWeight: FontWeight.bold)),
-            icon: Icon(Icons.celebration),
-            backgroundColor: Colors.amber,
-          ),
+      //floatingActionButton: _isLoading || _errorMessage.isNotEmpty
+      //  ? null // Não mostra o botão se estiver carregando ou com erro
+      //  : FloatingActionButton.extended(
+      //      onPressed: _callBingo,
+      //      label: Text('BINGO!', style: TextStyle(fontWeight: FontWeight.bold)),
+      //      icon: Icon(Icons.celebration),
+      //      backgroundColor: Colors.amber,
+      //    ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       
       body: _isLoading
@@ -183,6 +198,33 @@ class _ViewerScreenState extends State<ViewerScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text('Rodada: ${_sessionData!['round']} | Prêmio: ${_sessionData!['prize']}', style: TextStyle(fontSize: 18)),
                     ),
+                    // ===============================================
+                    // PAINEL DE DESTAQUE DO ÚLTIMO NÚMERO
+                    // ===============================================
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        children: [
+                          Text('Último Número Sorteado'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                _getBingoLetter(_lastDrawnNumber),
+                                style: TextStyle(fontSize: 48, color: Colors.grey[700]),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                '${_lastDrawnNumber ?? '-'}',
+                                style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Colors.indigo),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Divider(height: 20, thickness: 1),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
