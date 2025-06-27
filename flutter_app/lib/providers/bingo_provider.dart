@@ -92,6 +92,11 @@ class BingoProvider with ChangeNotifier {
     return false;
   }
 
+  void clearErrorMessage() {
+    errorMessage = null;
+    // Não notificamos listeners aqui, pois é uma limpeza interna
+  }
+
   // <-- MUDANÇA: A antiga _connectWebSocket foi substituída por esta lógica mais complexa
   void _initiateWebSocketConnection() {
     if (sessionId == null) return;
@@ -158,29 +163,43 @@ class BingoProvider with ChangeNotifier {
   }
 
   // <-- MUDANÇA: Nova função para centralizar o envio de mensagens
-  void _sendWebSocketMessage(Map<String, dynamic> message) {
+  bool _sendWebSocketMessage(Map<String, dynamic> message) {
     if (_connectionStatus == WebSocketStatus.connected && _channel != null) {
       _channel!.sink.add(json.encode(message));
+      return true;
     } else {
       print("Aviso: Não foi possível enviar a mensagem. WebSocket não está conectado. Status: $_connectionStatus");
+      errorMessage = "Não foi possível sortear. Verifique a conexão com a internet."; // Define uma mensagem de erro
+      notifyListeners(); // Notifica a UI sobre o erro
+      return false; // F      return false;
     }
   }
 
-  void drawNumber(int number) {
+  bool drawNumber(int number) {
     if (availableNumbers.contains(number)) {
       availableNumbers.remove(number);
       drawnNumbers.add(number);
-      _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
-      notifyListeners();
+      final success =  _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
+      if (success) {
+        // Se o envio foi bem-sucedido, atualiza o estado local
+        availableNumbers.remove(number);
+        drawnNumbers.add(number);
+        errorMessage = null; // Limpa qualquer erro anterior
+        notifyListeners();
+        return true;
+      }
+      return false; // Se o envio falhou, retorna false
     }
+    return false;
   }
 
-  void drawRandomNumber() {
+  bool drawRandomNumber() {
     if (availableNumbers.isNotEmpty) {
       final random = Random();
       final index = random.nextInt(availableNumbers.length);
-      drawNumber(availableNumbers[index]);
+      return drawNumber(availableNumbers[index]);
     }
+    return false; // Retorna false se não houver números disponíveis
   }
 
   void callBingo({required List<String> winners}) {
