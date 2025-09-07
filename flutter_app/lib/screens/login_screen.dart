@@ -6,6 +6,8 @@ import 'package:bingou/screens/register_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -51,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bingou! - Login'),
+        title: const Text('Bingou! - Login'),
         automaticallyImplyLeading: false, // Remove o botão de voltar
       ),
       body: Center(
@@ -65,19 +67,19 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email', border: OutlineInputBorder(), prefixIcon: Icon(Icons.email)),
+                  decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder(), prefixIcon: Icon(Icons.email)),
                   keyboardType: TextInputType.emailAddress,
                   validator: (val) => val!.isEmpty || !val.contains('@') ? 'Insira um email válido' : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Senha', border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock)),
+                  decoration: const InputDecoration(labelText: 'Senha', border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock)),
                   obscureText: true,
                   validator: (val) => val!.isEmpty ? 'Insira a senha' : null,
                 ),
                 CheckboxListTile(
-                  title: Text("Lembrar-me neste dispositivo"),
+                  title: const Text("Lembrar-me neste dispositivo"),
                   value: _rememberMe,
                   onChanged: (newValue) {
                     setState(() {
@@ -87,25 +89,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   controlAffinity: ListTileControlAffinity.leading, // Checkbox à esquerda
                   contentPadding: EdgeInsets.zero,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Consumer<AuthProvider>(
                   builder: (ctx, auth, _) => ElevatedButton(
-                    style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 16)),
+                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
                     onPressed: auth.isLoading ? null : _login,
-                    child: auth.isLoading ? CircularProgressIndicator(color: Colors.white) : Text('ENTRAR'),
+                    child: auth.isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('ENTRAR'),
                   ),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => RegisterScreen()));
                   },
-                  child: Text('Não tem uma conta? Registre-se'),
+                  child: const Text('Não tem uma conta? Registre-se'),
                 ),
-                SizedBox(height: 16),
-                Divider(),
+                const SizedBox(height: 16),
+                const Divider(),
                 TextButton.icon(
-                  icon: Icon(Icons.visibility),
-                  label: Text('Acompanhar uma sessão como convidado'),
+                  icon: const Icon(Icons.visibility),
+                  label: const Text('Acompanhar uma sessão como convidado'),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => JoinSessionScreen()),

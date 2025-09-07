@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
+
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
 }
@@ -38,7 +40,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Histórico de Sessões'),
+        title: const Text('Histórico de Sessões'),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshHistory,
@@ -47,10 +49,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
           builder: (ctx, snapshot) {
             // A lógica do builder permanece a mesma
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.error != null) {
-              return Center(child: Text('Ocorreu um erro ao carregar o histórico.'));
+              return const Center(child: Text('Ocorreu um erro ao carregar o histórico.'));
             }
             
             return Consumer<AuthProvider>(
@@ -73,19 +75,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     final bool isActive = session['status'] == 'active';
 
                     return Card(
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: isActive ? Colors.green : Colors.grey,
                           child: Icon(isActive ? Icons.play_arrow_rounded : Icons.check_circle_outline, color: Colors.white),
                         ),
-                        title: Text(session['sessionName'], style: TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(session['sessionName'], style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text('Sorteados: ${(session['drawnNumbers'] as List).length} | Criado em: $date'),
                         trailing: Chip(
-                          label: Text(isActive ? 'Ativa' : 'Encerrada', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          label: Text(isActive ? 'Ativa' : 'Encerrada', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           backgroundColor: isActive ? Colors.green.shade600 : Colors.blueGrey,
-                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          labelPadding: EdgeInsets.only(left: 4, right: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          labelPadding: const EdgeInsets.only(left: 4, right: 2),
                         ),
                         onTap: () {
                           if (isActive) {

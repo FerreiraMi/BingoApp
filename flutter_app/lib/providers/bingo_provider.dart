@@ -66,8 +66,8 @@ class BingoProvider with ChangeNotifier {
         _initiateWebSocketConnection();
 
         if (oldSessionId != null) {
-          final newUrl = '${AppConstants.WEB_PAGE_URL}/${shortSessionId}'; 
-          Future.delayed(Duration(milliseconds: 500), () {
+          final newUrl = '${AppConstants.WEB_PAGE_URL}/$shortSessionId'; 
+          Future.delayed(const Duration(milliseconds: 500), () {
              _sendWebSocketMessage({
                 'type': 'redirect',
                 'targetSessionId': oldSessionId,

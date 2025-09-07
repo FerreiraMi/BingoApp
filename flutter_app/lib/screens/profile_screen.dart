@@ -4,6 +4,8 @@ import 'package:bingou/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Usamos um Consumer para obter os dados do usuário do AuthProvider
@@ -11,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meu Perfil'),
+        title: const Text('Meu Perfil'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,21 +25,21 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text('Email Cadastrado:', style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text(authProvider.userEmail ?? 'Não disponível', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text('Email Cadastrado:', style: TextStyle(color: Colors.grey)),
+                    const SizedBox(height: 8),
+                    Text(authProvider.userEmail ?? 'Não disponível', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
             ),
-            Spacer(), // Empurra o botão para o final
+            const Spacer(), // Empurra o botão para o final
             ElevatedButton.icon(
-              icon: Icon(Icons.logout),
-              label: Text('SAIR (LOGOUT)'),
+              icon: const Icon(Icons.logout),
+              label: const Text('SAIR (LOGOUT)'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
                 authProvider.logout();
