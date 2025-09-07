@@ -32,14 +32,14 @@ class SessionDetailsScreen extends StatelessWidget {
         child: Column(
           children: [
             // Informações do Cabeçalho
-            Text('Rodada: ${session['round']} | Prêmio: ${session['prize']}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-            SizedBox(height: 8),
+            Text('Rodada: ${session['round']} | Prêmio: ${session['prize']}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 8),
             Text('Realizada em: $date', style: TextStyle(fontSize: 14, color: Colors.grey[600])),
-            Divider(height: 30, thickness: 1),
+            const Divider(height: 30, thickness: 1),
 
             // Painel B-I-N-G-O
-            Text('Números Sorteados (${drawnNumbers.length})', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16),
+            Text('Números Sorteados (${drawnNumbers.length})', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,8 +67,8 @@ class SessionDetailsScreen extends StatelessWidget {
       child: Column(
         children: [
           // Cabeçalho da Letra
-          Text(letter, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.indigo)),
-          SizedBox(height: 8),
+          Text(letter, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.indigo)),
+          const SizedBox(height: 8),
           // Grid com os números
           Expanded(
             child: ListView.builder(
@@ -81,7 +81,7 @@ class SessionDetailsScreen extends StatelessWidget {
                       backgroundColor: Colors.grey[300],
                       child: Text(
                         columnNumbers[index].toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
                       ),
                     ),
                   ),

@@ -7,23 +7,25 @@ import 'package:bingou/utils/constants.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class BingoControlScreen extends StatelessWidget {
+  const BingoControlScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final bingoProvider = Provider.of<BingoProvider>(context, listen: false);
     final textController = TextEditingController();
 
     // Função auxiliar para o diálogo de confirmação de ENCERRAMENTO
-    Future<bool> _showFinishConfirmationDialog() async {
+    Future<bool> showFinishConfirmationDialog() async {
       return await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Encerrar sessão?'),
-              content: Text('Deseja realmente marcar esta sessão como encerrada e finalizá-la? Esta ação não pode ser desfeita.'),
+              title: const Text('Encerrar sessão?'),
+              content: const Text('Deseja realmente marcar esta sessão como encerrada e finalizá-la? Esta ação não pode ser desfeita.'),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancelar')),
+                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text('Encerrar', style: TextStyle(color: Colors.red)),
+                  child: const Text('Encerrar', style: TextStyle(color: Colors.red)),
                 ),
               ],
             ),
@@ -31,7 +33,7 @@ class BingoControlScreen extends StatelessWidget {
     }
 
     // Função auxiliar para o diálogo de REGISTRO DE GANHADORES
-    Future<void> _showBingoWinnerDialog() async {
+    Future<void> showBingoWinnerDialog() async {
       final winnersController = TextEditingController();
       final formKey = GlobalKey<FormState>();
 
@@ -39,12 +41,12 @@ class BingoControlScreen extends StatelessWidget {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          title: Text('BINGO! Registrar Ganhador(es)'),
+          title: const Text('BINGO! Registrar Ganhador(es)'),
           content: Form(
             key: formKey,
             child: TextFormField(
               controller: winnersController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Nome(s) do(s) Ganhador(es)',
                 hintText: 'Separe por vírgula se houver mais de um',
                 border: OutlineInputBorder(),
@@ -53,9 +55,9 @@ class BingoControlScreen extends StatelessWidget {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancelar')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
             ElevatedButton(
-              child: Text('Confirmar Bingo'),
+              child: const Text('Confirmar Bingo'),
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   Navigator.pop(ctx, true);
@@ -74,7 +76,7 @@ class BingoControlScreen extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        final confirmed = await _showFinishConfirmationDialog();
+        final confirmed = await showFinishConfirmationDialog();
         if (confirmed) {
           await bingoProvider.finishCurrentSession();
           bingoProvider.reset();
@@ -84,7 +86,7 @@ class BingoControlScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             tooltip: 'Voltar para o histórico (manter sessão ativa)',
             onPressed: () {
               Navigator.of(context).pop();
@@ -107,8 +109,8 @@ class BingoControlScreen extends StatelessWidget {
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Aponte a câmera para o QR Code', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
-                          SizedBox(height: 20),
+                          const Text('Aponte a câmera para o QR Code', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
+                          const SizedBox(height: 20),
                           SizedBox(
                             width: 200,
                             height: 200,
@@ -120,18 +122,18 @@ class BingoControlScreen extends StatelessWidget {
                               version: QrVersions.auto,
                             ),
                           ),
-                          SizedBox(height: 20),
-                          SelectableText(shareUrl, style: TextStyle(fontSize: 12)),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
+                          SelectableText(shareUrl, style: const TextStyle(fontSize: 12)),
+                          const SizedBox(height: 20),
 
                           // Botão para copiar o link
                           ElevatedButton.icon(
-                            icon: Icon(Icons.copy, size: 18),
-                            label: Text('Copiar Link'),
+                            icon: const Icon(Icons.copy, size: 18),
+                            label: const Text('Copiar Link'),
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: shareUrl));
                               Navigator.of(ctx).pop(); // Fecha o diálogo
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Link copiado para a área de transferência!')));
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copiado para a área de transferência!')));
                             },
                           )
                           //end
@@ -141,7 +143,7 @@ class BingoControlScreen extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                   child: Row(
                     children: [
@@ -153,87 +155,87 @@ class BingoControlScreen extends StatelessWidget {
                             Consumer<BingoProvider>(
                               builder: (ctx, provider, _) => Text(
                                 provider.shortSessionId ?? '...',
-                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 2),
+                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 2),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.qr_code_2_rounded, size: 48, color: Colors.indigo),
+                      const Icon(Icons.qr_code_2_rounded, size: 48, color: Colors.indigo),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // O resto do código permanece exatamente o mesmo
               // ...
               Row(
                 children: [
-                  Expanded(child: ElevatedButton(onPressed: bingoProvider.drawRandomNumber, child: Text('SORTEAR'), style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 16)))),
-                  SizedBox(width: 10),
-                  SizedBox(width: 80, child: TextField(controller: textController, textAlign: TextAlign.center, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Manual', border: OutlineInputBorder()))),
+                  Expanded(child: ElevatedButton(onPressed: bingoProvider.drawRandomNumber, style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)), child: Text('SORTEAR'))),
+                  const SizedBox(width: 10),
+                  SizedBox(width: 80, child: TextField(controller: textController, textAlign: TextAlign.center, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Manual', border: OutlineInputBorder()))),
                   IconButton(
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     onPressed: () {
                       final number = int.tryParse(textController.text);
                       if (number != null && number > 0 && number <= 75) {
                         bingoProvider.drawNumber(number); textController.clear(); FocusScope.of(context).unfocus();
-                      } else { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Número inválido.'), duration: Duration(seconds: 1))); }
+                      } else { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Número inválido.'), duration: Duration(seconds: 1))); }
                     },
                   )
                 ],
               ),
-              SizedBox(height: 20),
-              Text('Último número sorteado:', style: TextStyle(fontSize: 16)),
-              Selector<BingoProvider, int?>(selector: (ctx, provider) => provider.drawnNumbers.isNotEmpty ? provider.drawnNumbers.last : null, builder: (ctx, lastNumber, _) => Text('${lastNumber ?? '-'}', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold))),
-              SizedBox(height: 10),
+              const SizedBox(height: 20),
+              const Text('Último número sorteado:', style: TextStyle(fontSize: 16)),
+              Selector<BingoProvider, int?>(selector: (ctx, provider) => provider.drawnNumbers.isNotEmpty ? provider.drawnNumbers.last : null, builder: (ctx, lastNumber, _) => Text('${lastNumber ?? '-'}', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold))),
+              const SizedBox(height: 10),
               Selector<BingoProvider, int>(selector: (ctx, provider) => provider.availableNumbers.length, builder: (ctx, count, _) => Text('$count números restantes')),
-              Divider(height: 30),
+              const Divider(height: 30),
               Expanded(
                 child: Consumer<BingoProvider>(
                   builder: (ctx, provider, _) {
-                    if (provider.drawnNumbers.isEmpty) { return Center(child: Text('Nenhum número sorteado ainda.')); }
+                    if (provider.drawnNumbers.isEmpty) { return const Center(child: Text('Nenhum número sorteado ainda.')); }
                     final reversedList = provider.drawnNumbers.reversed.toList();
                     return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8, mainAxisSpacing: 4, crossAxisSpacing: 4),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8, mainAxisSpacing: 4, crossAxisSpacing: 4),
                       itemCount: reversedList.length,
-                      itemBuilder: (ctx, index) => CircleAvatar(backgroundColor: Colors.indigo, child: Text(reversedList[index].toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                      itemBuilder: (ctx, index) => CircleAvatar(backgroundColor: Colors.indigo, child: Text(reversedList[index].toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
                     );
                   },
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 16.0), child: Text('BINGO!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
-                  onPressed: _showBingoWinnerDialog,
+                  onPressed: showBingoWinnerDialog,
+                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 16.0), child: Text('BINGO!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      child: Text('Encerrar Sessão'),
-                      style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red)),
+                      style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)),
                       onPressed: () async {
-                        final confirmed = await _showFinishConfirmationDialog();
+                        final confirmed = await showFinishConfirmationDialog();
                         if (confirmed && context.mounted) {
                           await bingoProvider.finishCurrentSession();
                           bingoProvider.reset();
                           Navigator.of(context).pop();
                         }
                       },
+                      child: Text('Encerrar Sessão'),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton(
-                      child: Text('Iniciar Nova'),
+                      child: const Text('Iniciar Nova'),
                       onPressed: () async {
-                        final confirmed = await _showFinishConfirmationDialog();
+                        final confirmed = await showFinishConfirmationDialog();
                         if (confirmed && context.mounted) {
                           final oldId = bingoProvider.sessionId;
                           await bingoProvider.finishCurrentSession();

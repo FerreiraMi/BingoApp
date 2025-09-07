@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRScannerScreen extends StatelessWidget {
+  const QRScannerScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Aponte para o QR Code')),
+      appBar: AppBar(title: const Text('Aponte para o QR Code')),
       body: MobileScanner(
         onDetect: (capture) {
           final List<Barcode> barcodes = capture.barcodes;

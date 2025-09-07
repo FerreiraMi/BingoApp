@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFFF5CC6F),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              foregroundColor: Color(0xFF902A05), // cor dos textos tipo link
+              foregroundColor: const Color(0xFF902A05), // cor dos textos tipo link
             ),
           ),
           inputDecorationTheme: const InputDecorationTheme(
@@ -46,12 +46,12 @@ class MyApp extends StatelessWidget {
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,          // cor do texto
-              backgroundColor: Color(0xFF902A05),     // cor de fundo do botão
+              backgroundColor: const Color(0xFF902A05),     // cor de fundo do botão
             ),
           ),
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
-              foregroundColor: Color(0xFF902A05),     // texto e borda
+              foregroundColor: const Color(0xFF902A05),     // texto e borda
             ),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -63,6 +63,8 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Usamos um FutureBuilder para tentar o autologin na inicialização
@@ -71,7 +73,7 @@ class AuthWrapper extends StatelessWidget {
       builder: (ctx, authResultSnapshot) {
         // Mostra um spinner enquanto o autologin está sendo verificado
         if (authResultSnapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         
         // Após a verificação, o Consumer decide a tela com base no estado de login

@@ -8,6 +8,8 @@ import 'package:bingou/providers/bingo_provider.dart'; // Importe o bingo provid
 import 'package:bingou/screens/bingo_control_screen.dart'; // Importe a tela de controle
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -63,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF902A05),
+        selectedItemColor: const Color(0xFF902A05),
         onTap: _onItemTapped,
       ),
     );

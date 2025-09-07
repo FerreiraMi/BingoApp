@@ -45,15 +45,15 @@ class _ViewerScreenState extends State<ViewerScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text('Identifique-se'),
+        title: const Text('Identifique-se'),
         content: TextField(
           controller: nameController,
           autofocus: true,
-          decoration: InputDecoration(hintText: 'Digite seu nome...'),
+          decoration: const InputDecoration(hintText: 'Digite seu nome...'),
         ),
         actions: [
           ElevatedButton(
-            child: Text('Entrar'),
+            child: const Text('Entrar'),
             onPressed: () {
               if (nameController.text.trim().isNotEmpty) {
                 Navigator.pop(ctx, nameController.text.trim());
@@ -132,7 +132,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
       // Precisamos enviar o ID longo da sessão.
       final longSessionId = _sessionData?['_id'];
       if (longSessionId == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: ID da sessão não encontrado.')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Erro: ID da sessão não encontrado.')));
           return;
       }
       
@@ -143,13 +143,13 @@ class _ViewerScreenState extends State<ViewerScreen> {
       }));
       
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('BINGO! Seu chamado foi enviado.'),
           backgroundColor: Colors.green,
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Não foi possível enviar. Verifique sua conexão.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Não foi possível enviar. Verifique sua conexão.')));
     }
   }
 
@@ -189,14 +189,14 @@ class _ViewerScreenState extends State<ViewerScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red, fontSize: 18)))
+              ? Center(child: Text(_errorMessage, style: const TextStyle(color: Colors.red, fontSize: 18)))
               : Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Text('Rodada: ${_sessionData!['round']} | Prêmio: ${_sessionData!['prize']}', style: TextStyle(fontSize: 18)),
+                      child: Text('Rodada: ${_sessionData!['round']} | Prêmio: ${_sessionData!['prize']}', style: const TextStyle(fontSize: 18)),
                     ),
                     // ===============================================
                     // PAINEL DE DESTAQUE DO ÚLTIMO NÚMERO
@@ -205,7 +205,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Column(
                         children: [
-                          Text('Último Número Sorteado'),
+                          const Text('Último Número Sorteado'),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,17 +214,17 @@ class _ViewerScreenState extends State<ViewerScreen> {
                                 _getBingoLetter(_lastDrawnNumber),
                                 style: TextStyle(fontSize: 48, color: Colors.grey[700]),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(
                                 '${_lastDrawnNumber ?? '-'}',
-                                style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Colors.indigo),
+                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Colors.indigo),
                               ),
                             ],
                           )
                         ],
                       ),
                     ),
-                    Divider(height: 20, thickness: 1),
+                    const Divider(height: 20, thickness: 1),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -240,7 +240,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 70), // Espaço para o FloatingActionButton não cobrir o conteúdo
+                    const SizedBox(height: 70), // Espaço para o FloatingActionButton não cobrir o conteúdo
                   ],
                 ),
     );
@@ -251,8 +251,8 @@ class _ViewerScreenState extends State<ViewerScreen> {
     return Expanded(
       child: Column(
         children: [
-          Text(letter, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.indigo)),
-          SizedBox(height: 8),
+          Text(letter, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.indigo)),
+          const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.zero,
@@ -267,7 +267,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
                       backgroundColor: Colors.green.shade600,
                       child: Text(
                         number.toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
                       ),
                     ),
                   ),
