@@ -20,23 +20,8 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="assets/img/logo1.png" alt="Bingou! Logo" height="40">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#recursos">Recursos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#pro">Versão PRO</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <? include "navbar.php"?>
+    
 
     <!-- Seção Hero -->
     <header class="hero-section text-center text-white d-flex">
@@ -93,6 +78,7 @@
     </section>
 
     <!-- Seção Versão PRO -->
+    <!-- 
     <section class="page-section bg-dark text-white" id="pro">
         <div class="container text-center">
             <h2 class="mb-4">Seja PRO por um preço imbatível!</h2>
@@ -105,7 +91,7 @@
             <a class="btn btn-light btn-xl" href="#">Quero ser PRO!</a>
         </div>
     </section>
-
+    -->
     <!-- Seção de Contato -->
     <section class="page-section" id="contato">
         <div class="container">
@@ -143,10 +129,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-light py-5">
-        <div class="container"><div class="small text-center text-muted">Copyright © <?php echo date("Y"); ?> - Bingou! by ABE Enterprises</div></div>
-    </footer>
+   <? include "footer.php"; ?>  
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
