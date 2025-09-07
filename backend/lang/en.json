@@ -1,6 +1,5 @@
 {
   "menu": {
-    "home": "Home",
     "features": "Features",
     "pro": "PRO Version",
     "contact": "Contact",
@@ -10,20 +9,290 @@
   },
   "hero": {
     "title": "The easiest and funniest way to organize your bingo",
-    "subtitle": "Control your rounds, share with friends and track in real time, all in the palm of your hand!",
+    "subtitle": "Control rounds, share with friends, and track in real time—right from your phone!",
     "button": "Discover More"
   },
-  "instructions": {
-    "title": "Instructions",
-    "step1": "Download the Bingou! app from Google Play or Apple App Store.",
-    "step2": "Create your account with a valid email and password.",
-    "step3": "Create or join a bingo session.",
-    "step4": "Play Bingo in real time.",
-    "step5": "Check the winners and saved history.",
-    "step6": "Security tips: never share your password."
+  "features": {
+    "title": "Awesome Features",
+    "items": {
+      "panel": {
+        "title": "Real-Time Panel",
+        "desc": "Share a link and display drawn numbers on any TV or projector."
+      },
+      "control": {
+        "title": "Full Control",
+        "desc": "Draw numbers automatically or enter them manually with total flexibility."
+      },
+      "call": {
+        "title": "Bingo Call",
+        "desc": "Players can 'call bingo' in the app, alerting the operator instantly."
+      },
+      "history": {
+        "title": "Complete History",
+        "desc": "Save sessions, view drawn numbers and each round’s winners."
+      }
+    }
+  },
+  "pro": {
+    "title": "Go PRO for an unbeatable price!",
+    "price_label": "R$ 15.00",
+    "per_year": "per year",
+    "no_ads": "With PRO, you and viewers enjoy a completely ad‑free experience!",
+    "cta": "Become PRO!"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "intro": "Got questions, suggestions, or need support? Reach out!",
+    "name_label": "Full name",
+    "email_label": "Email address",
+    "message_label": "Message",
+    "submit": "Send Message"
   },
   "footer": {
     "copyright": "Copyright ©",
     "by": "Bingou! by ABE Enterprises"
+  },
+  "instructions": {
+    "hero": {
+      "title": "Instructions",
+      "subtitle": "Learn how to use Bingou! quickly and easily"
+    },
+    "index": "Index",
+    "steps": {
+      "1": {
+        "short": "Install",
+        "title": "1. Installation",
+        "desc": "Download Bingou! from Google Play or Apple App Store. Open the app on your device."
+      },
+      "2": {
+        "short": "Account",
+        "title": "2. Create an Account",
+        "desc": "Create your account with a valid email and password. You must accept the Terms of Use and Privacy Policy."
+      },
+      "3": {
+        "short": "Session",
+        "title": "3. Create or Join a Session",
+        "items": {
+          "create": "Create: pick a name, set prizes, share the code/QR.",
+          "join": "Join: enter the code provided by the host."
+        }
+      },
+      "4": {
+        "short": "Playing",
+        "title": "4. Playing Bingo",
+        "desc": "Drawn numbers update in real time. When you complete a valid card, tap 'Call Bingo'."
+      },
+      "5": {
+        "short": "Winners",
+        "title": "5. Winners",
+        "desc": "The host validates bingo calls and announces winners. History remains available."
+      },
+      "6": {
+        "short": "Security",
+        "title": "6. Security Tips",
+        "items": {
+          "pw": "Never share your password.",
+          "network": "Use trusted networks.",
+          "community": "Respect others and follow the rules."
+        }
+      }
+    }
+  },
+  "common": {
+    "index": "Index"
+  },
+  "terms": {
+    "sections": [
+      {
+        "title": "1. Acceptance of Terms",
+        "content": [
+          "By using Bingou! you agree to these Terms and the Privacy Policy. If you disagree, do not use the app."
+        ],
+        "list": []
+      },
+      {
+        "title": "2. Eligibility and Nature of Service",
+        "content": [
+          "The app is for entertainment and organizing bingo sessions. No real-money gambling."
+        ],
+        "list": [
+          "You are at least 18 or legally capable.",
+          "Use in accordance with applicable laws."
+        ]
+      },
+      {
+        "title": "3. User Account",
+        "content": [
+          "You are responsible for your credentials and for accurate information."
+        ],
+        "list": [
+          "We may suspend accounts that violate these Terms.",
+          "Request deletion at suporte@iw7.com.br."
+        ]
+      },
+      {
+        "title": "4. License",
+        "content": [
+          "Limited, personal, revocable, non-transferable and non-exclusive license."
+        ],
+        "list": [
+          "No security bypass or reverse engineering."
+        ]
+      },
+      {
+        "title": "5. Prohibited Conduct",
+        "content": [
+          "Do not harm service integrity or others."
+        ],
+        "list": [
+          "Bots, cheats, unfair automations.",
+          "Illicit or infringing content.",
+          "Attacks or vulnerability exploitation."
+        ]
+      },
+      {
+        "title": "6. Purchases and Payments",
+        "content": [
+          "Paid features follow store rules (App Store/Google Play). Virtual currency has no real value unless required by law."
+        ],
+        "list": []
+      },
+      {
+        "title": "7. Privacy and Data",
+        "content": [
+          "Data processed according to the Privacy Policy."
+        ],
+        "list": []
+      },
+      {
+        "title": "8. User Content",
+        "content": [
+          "You grant a license to store, process, and display submitted content solely to operate the service."
+        ],
+        "list": []
+      },
+      {
+        "title": "9. Third-Party Services",
+        "content": [
+          "Integrations have their own terms and policies."
+        ],
+        "list": []
+      },
+      {
+        "title": "10. Warranty Disclaimer",
+        "content": [
+          "App provided 'as is' and 'as available'."
+        ],
+        "list": []
+      },
+      {
+        "title": "11. Limitation of Liability",
+        "content": [
+          "To the maximum extent allowed, we are not liable for indirect damages or lost profits."
+        ],
+        "list": []
+      },
+      {
+        "title": "12. Suspension and Termination",
+        "content": [
+          "We may suspend/terminate access for legal/contract breaches. You may request data deletion."
+        ],
+        "list": []
+      },
+      {
+        "title": "13. Changes",
+        "content": [
+          "These Terms may be updated periodically. Continued use means acceptance."
+        ],
+        "list": []
+      },
+      {
+        "title": "14. Governing Law and Venue",
+        "content": [
+          "Brazilian law. Courts of São Paulo/SP, unless otherwise required by law."
+        ],
+        "list": []
+      }
+    ]
+  },
+  "privacy": {
+    "sections": [
+      {
+        "title": "1. Information Collected",
+        "content": [
+          "We collect registration, usage, and technical data to operate and improve the service."
+        ],
+        "list": [
+          "Name, email, password.",
+          "Sessions, numbers, results.",
+          "Device model, OS, approximate IP."
+        ]
+      },
+      {
+        "title": "2. Use of Information",
+        "content": [
+          "We use it to operate features, ensure security, send notifications, and improve UX."
+        ],
+        "list": []
+      },
+      {
+        "title": "3. Sharing",
+        "content": [
+          "We do not sell data. We share only when necessary, by law, or with consent."
+        ],
+        "list": []
+      },
+      {
+        "title": "4. Storage and Security",
+        "content": [
+          "Stored on secure servers. No system is 100% secure."
+        ],
+        "list": []
+      },
+      {
+        "title": "5. Your Rights",
+        "content": [
+          "Access, correct, update, or request deletion."
+        ],
+        "list": [
+          "Revoke consents at any time."
+        ]
+      },
+      {
+        "title": "6. Cookies and Technologies",
+        "content": [
+          "Cookies for preferences, session, and analytics."
+        ],
+        "list": []
+      },
+      {
+        "title": "7. Third-Party Services",
+        "content": [
+          "Integrations follow each provider’s policies."
+        ],
+        "list": []
+      },
+      {
+        "title": "8. Data Retention",
+        "content": [
+          "We keep data as long as necessary for the purposes or by law."
+        ],
+        "list": []
+      },
+      {
+        "title": "9. Changes",
+        "content": [
+          "This Policy may be updated periodically."
+        ],
+        "list": []
+      },
+      {
+        "title": "10. Contact",
+        "content": [
+          "Questions: suporte@iw7.com.br."
+        ],
+        "list": []
+      }
+    ]
   }
 }

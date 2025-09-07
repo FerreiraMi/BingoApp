@@ -1,0 +1,298 @@
+{
+  "menu": {
+    "features": "Recursos",
+    "pro": "Versión PRO",
+    "contact": "Contacto",
+    "instructions": "Instrucciones",
+    "terms": "Términos de Uso",
+    "privacy": "Política de Privacidad"
+  },
+  "hero": {
+    "title": "La manera más fácil y divertida de organizar tu bingo",
+    "subtitle": "Controla las rondas, comparte con amigos y sigue todo en tiempo real, ¡desde tu teléfono!",
+    "button": "Descubrir Más"
+  },
+  "features": {
+    "title": "Recursos Increíbles",
+    "items": {
+      "panel": {
+        "title": "Panel en Tiempo Real",
+        "desc": "Comparte un enlace y muestra los números en cualquier TV o proyector."
+      },
+      "control": {
+        "title": "Control Total",
+        "desc": "Sortea números automáticamente o introdúcelos manualmente con total flexibilidad."
+      },
+      "call": {
+        "title": "Cantar Bingo",
+        "desc": "Los jugadores pueden 'cantar bingo' en la app y alertar al operador al instante."
+      },
+      "history": {
+        "title": "Historial Completo",
+        "desc": "Guarda sesiones, consulta números sorteados y ganadores de cada ronda."
+      }
+    }
+  },
+  "pro": {
+    "title": "¡Hazte PRO a un precio imbatible!",
+    "price_label": "R$ 15,00",
+    "per_year": "por año",
+    "no_ads": "Con PRO, tú y tus espectadores disfrutan de una experiencia totalmente sin anuncios.",
+    "cta": "¡Quiero ser PRO!"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "intro": "¿Dudas, sugerencias o soporte? ¡Escríbenos!",
+    "name_label": "Nombre completo",
+    "email_label": "Correo electrónico",
+    "message_label": "Mensaje",
+    "submit": "Enviar Mensaje"
+  },
+  "footer": {
+    "copyright": "Copyright ©",
+    "by": "Bingou! by ABE Enterprises"
+  },
+  "instructions": {
+    "hero": {
+      "title": "Instrucciones",
+      "subtitle": "Aprende a usar Bingou! de forma rápida y sencilla"
+    },
+    "index": "Índice",
+    "steps": {
+      "1": {
+        "short": "Instalación",
+        "title": "1. Instalación",
+        "desc": "Descarga Bingou! desde Google Play o Apple App Store. Abre la app en tu dispositivo."
+      },
+      "2": {
+        "short": "Cuenta",
+        "title": "2. Crear una Cuenta",
+        "desc": "Crea tu cuenta con correo y contraseña válidos. Debes aceptar los Términos de Uso y la Política de Privacidad."
+      },
+      "3": {
+        "short": "Sesión",
+        "title": "3. Crear o Unirse a una Sesión",
+        "items": {
+          "create": "Crear: elige un nombre, define premios y comparte el código/QR.",
+          "join": "Unirse: ingresa el código proporcionado por el organizador."
+        }
+      },
+      "4": {
+        "short": "Juego",
+        "title": "4. Jugar al Bingo",
+        "desc": "Los números se actualizan en tiempo real. Cuando completes un cartón válido, pulsa 'Cantar Bingo'."
+      },
+      "5": {
+        "short": "Ganadores",
+        "title": "5. Ganadores",
+        "desc": "El organizador valida los bingos y anuncia los ganadores. El historial queda disponible."
+      },
+      "6": {
+        "short": "Seguridad",
+        "title": "6. Consejos de Seguridad",
+        "items": {
+          "pw": "No compartas tu contraseña.",
+          "network": "Usa redes confiables.",
+          "community": "Respeta a los demás y sigue las reglas."
+        }
+      }
+    }
+  },
+  "common": {
+    "index": "Índice"
+  },
+  "terms": {
+    "sections": [
+      {
+        "title": "1. Aceptación de los Términos",
+        "content": [
+          "Al usar Bingou! aceptas estos Términos y la Política de Privacidad. Si no estás de acuerdo, no utilices la app."
+        ],
+        "list": []
+      },
+      {
+        "title": "2. Elegibilidad y Naturaleza del Servicio",
+        "content": [
+          "La app es para entretenimiento y organización de bingos. No hay apuestas con dinero real."
+        ],
+        "list": [
+          "Declaras tener al menos 18 años o capacidad legal.",
+          "Úsala conforme a la legislación aplicable."
+        ]
+      },
+      {
+        "title": "3. Cuenta de Usuario",
+        "content": [
+          "Eres responsable de tus credenciales y de la veracidad de la información."
+        ],
+        "list": [
+          "Podemos suspender cuentas que violen estos Términos.",
+          "Solicita eliminación en suporte@iw7.com.br."
+        ]
+      },
+      {
+        "title": "4. Licencia de Uso",
+        "content": [
+          "Licencia limitada, personal, revocable, intransferible y no exclusiva."
+        ],
+        "list": [
+          "Prohibido evadir seguridad o realizar ingeniería inversa."
+        ]
+      },
+      {
+        "title": "5. Conducta Prohibida",
+        "content": [
+          "No perjudiques la integridad del servicio ni a terceros."
+        ],
+        "list": [
+          "Bots, trampas y automatizaciones desleales.",
+          "Contenido ilícito o infractor.",
+          "Ataques o explotación de vulnerabilidades."
+        ]
+      },
+      {
+        "title": "6. Compras y Pagos",
+        "content": [
+          "Los recursos de pago siguen las reglas de la tienda (App Store/Google Play). La moneda virtual no tiene valor real, salvo exigencia legal."
+        ],
+        "list": []
+      },
+      {
+        "title": "7. Privacidad y Datos",
+        "content": [
+          "Tratamiento de datos según la Política de Privacidad."
+        ],
+        "list": []
+      },
+      {
+        "title": "8. Contenido del Usuario",
+        "content": [
+          "Concedes licencia para almacenar, procesar y mostrar el contenido enviado, solo para operar el servicio."
+        ],
+        "list": []
+      },
+      {
+        "title": "9. Servicios de Terceros",
+        "content": [
+          "Las integraciones tienen sus propios términos y políticas."
+        ],
+        "list": []
+      },
+      {
+        "title": "10. Exención de Garantías",
+        "content": [
+          "La app se ofrece 'tal cual' y 'según disponibilidad'."
+        ],
+        "list": []
+      },
+      {
+        "title": "11. Limitación de Responsabilidad",
+        "content": [
+          "En la máxima medida legal, no somos responsables por daños indirectos ni lucro cesante."
+        ],
+        "list": []
+      },
+      {
+        "title": "12. Suspensión y Rescisión",
+        "content": [
+          "Podemos suspender/terminar el acceso por incumplimientos. Puedes solicitar eliminación de datos."
+        ],
+        "list": []
+      },
+      {
+        "title": "13. Cambios",
+        "content": [
+          "Estos Términos pueden actualizarse periódicamente. El uso continuo implica aceptación."
+        ],
+        "list": []
+      },
+      {
+        "title": "14. Ley y Jurisdicción",
+        "content": [
+          "Leyes de Brasil. Tribunales de São Paulo/SP, salvo disposición legal."
+        ],
+        "list": []
+      }
+    ]
+  },
+  "privacy": {
+    "sections": [
+      {
+        "title": "1. Información Recopilada",
+        "content": [
+          "Recopilamos datos de registro, uso y técnicos para operar y mejorar el servicio."
+        ],
+        "list": [
+          "Nombre, correo, contraseña.",
+          "Sesiones, números, resultados.",
+          "Modelo de dispositivo, SO, IP aproximada."
+        ]
+      },
+      {
+        "title": "2. Uso de la Información",
+        "content": [
+          "Usamos la información para operar funciones, garantizar seguridad, enviar notificaciones y mejorar la experiencia."
+        ],
+        "list": []
+      },
+      {
+        "title": "3. Compartición",
+        "content": [
+          "No vendemos datos. Compartimos solo cuando es necesario, por ley o con consentimiento."
+        ],
+        "list": []
+      },
+      {
+        "title": "4. Almacenamiento y Seguridad",
+        "content": [
+          "Almacenamos en servidores seguros. Ningún sistema es 100% seguro."
+        ],
+        "list": []
+      },
+      {
+        "title": "5. Tus Derechos",
+        "content": [
+          "Puedes acceder, corregir, actualizar o solicitar la eliminación de datos."
+        ],
+        "list": [
+          "Revocar consentimientos en cualquier momento."
+        ]
+      },
+      {
+        "title": "6. Cookies y Tecnologías",
+        "content": [
+          "Usamos cookies para preferencias, sesión y análisis."
+        ],
+        "list": []
+      },
+      {
+        "title": "7. Servicios de Terceros",
+        "content": [
+          "Las integraciones siguen las políticas de cada proveedor."
+        ],
+        "list": []
+      },
+      {
+        "title": "8. Retención de Datos",
+        "content": [
+          "Mantenemos los datos el tiempo necesario para las finalidades o según la ley."
+        ],
+        "list": []
+      },
+      {
+        "title": "9. Cambios",
+        "content": [
+          "Esta Política puede actualizarse periódicamente."
+        ],
+        "list": []
+      },
+      {
+        "title": "10. Contacto",
+        "content": [
+          "Dudas: suporte@iw7.com.br."
+        ],
+        "list": []
+      }
+    ]
+  }
+}
