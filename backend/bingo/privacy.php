@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config/vars.php';
+require_once __DIR__ . '../config/vars.php';
 /**
  * Política de Privacidade - App Bingo
  * Compatível com o estilo visual de bingo.php (tema escuro, tipografia forte).
