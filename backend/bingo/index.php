@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config/vars.php';
+require_once __DIR__ . '../config/vars.php';
 // =========================================================================
 // ETAPA 1: O PHP BUSCA OS DADOS DA SESSÃO NO SERVIDOR
 // =========================================================================
