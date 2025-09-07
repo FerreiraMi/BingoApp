@@ -1,0 +1,29 @@
+{
+  "menu": {
+    "home": "Home",
+    "features": "Features",
+    "pro": "PRO Version",
+    "contact": "Contact",
+    "instructions": "Instructions",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy"
+  },
+  "hero": {
+    "title": "The easiest and funniest way to organize your bingo",
+    "subtitle": "Control your rounds, share with friends and track in real time, all in the palm of your hand!",
+    "button": "Discover More"
+  },
+  "instructions": {
+    "title": "Instructions",
+    "step1": "Download the Bingou! app from Google Play or Apple App Store.",
+    "step2": "Create your account with a valid email and password.",
+    "step3": "Create or join a bingo session.",
+    "step4": "Play Bingo in real time.",
+    "step5": "Check the winners and saved history.",
+    "step6": "Security tips: never share your password."
+  },
+  "footer": {
+    "copyright": "Copyright ©",
+    "by": "Bingou! by ABE Enterprises"
+  }
+}
