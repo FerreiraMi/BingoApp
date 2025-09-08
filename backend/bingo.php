@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/../config/vars.php';
+require_once __DIR__ . '/config/vars.php';
 // =========================================================================
 // ETAPA 1: O PHP BUSCA OS DADOS DA SESSÃO NO SERVIDOR
 // =========================================================================
 $sessionId = $_GET['session'] ?? null;
-$shortId = $_GET['shortId'] ?? null;
+$shortId = $_GET['i'] ?? null;
 
 if (!$shortId) {
     die("ID da sessão não fornecido.");
