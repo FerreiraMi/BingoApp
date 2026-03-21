@@ -25,7 +25,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
 
   void _scanQrCode() async {
     final shortId = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => QRScannerScreen()),
+      MaterialPageRoute(builder: (_) => const QRScannerScreen()),
     );
 
     if (shortId != null && mounted) {
@@ -69,7 +69,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
               ElevatedButton(
                 onPressed: _joinSession,
                 style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: Text('ACOMPANHAR'),
+                child: const Text('ACOMPANHAR'),
               ),
               const SizedBox(height: 24),
               OutlinedButton.icon(

@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: SplashScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
@@ -80,7 +80,7 @@ class AuthWrapper extends StatelessWidget {
         // Após a verificação, o Consumer decide a tela com base no estado de login
         return Consumer<AuthProvider>(
           // Se logado, vai para MainScreen, senão, para LoginScreen
-          builder: (ctx, auth, _) => auth.isLoggedIn ? MainScreen() : LoginScreen(), // <-- MUDANÇA AQUI
+          builder: (ctx, auth, _) => auth.isLoggedIn ? const MainScreen() : const LoginScreen(), // <-- MUDANÇA AQUI
         );
       },
     );

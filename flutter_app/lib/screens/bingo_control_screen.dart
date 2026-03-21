@@ -171,7 +171,7 @@ class BingoControlScreen extends StatelessWidget {
               // ...
               Row(
                 children: [
-                  Expanded(child: ElevatedButton(onPressed: bingoProvider.drawRandomNumber, style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)), child: Text('SORTEAR'))),
+                  Expanded(child: ElevatedButton(onPressed: bingoProvider.drawRandomNumber, style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)), child: const Text('SORTEAR'))),
                   const SizedBox(width: 10),
                   SizedBox(width: 80, child: TextField(controller: textController, textAlign: TextAlign.center, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Manual', border: OutlineInputBorder()))),
                   IconButton(
@@ -210,7 +210,7 @@ class BingoControlScreen extends StatelessWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
                   onPressed: showBingoWinnerDialog,
-                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 16.0), child: Text('BINGO!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                  child: const Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: Text('BINGO!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                 ),
               ),
               const SizedBox(height: 10),
@@ -227,7 +227,7 @@ class BingoControlScreen extends StatelessWidget {
                           Navigator.of(context).pop();
                         }
                       },
-                      child: Text('Encerrar Sessão'),
+                      child: const Text('Encerrar Sessão'),
                     ),
                   ),
                   const SizedBox(width: 10),

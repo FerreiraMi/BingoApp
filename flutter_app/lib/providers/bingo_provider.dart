@@ -179,16 +179,10 @@ class BingoProvider with ChangeNotifier {
     if (availableNumbers.contains(number)) {
       availableNumbers.remove(number);
       drawnNumbers.add(number);
-      final success =  _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
-      if (success) {
-        // Se o envio foi bem-sucedido, atualiza o estado local
-        availableNumbers.remove(number);
-        drawnNumbers.add(number);
-        errorMessage = null; // Limpa qualquer erro anterior
-        notifyListeners();
-        return true;
-      }
-      return false; // Se o envio falhou, retorna false
+      errorMessage = null;
+      notifyListeners();
+      _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
+      return true;
     }
     return false;
   }

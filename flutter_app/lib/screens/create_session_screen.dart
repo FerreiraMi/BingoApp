@@ -42,7 +42,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
     );
     if (success && mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => BingoControlScreen()),
+        MaterialPageRoute(builder: (_) => const BingoControlScreen()),
       );
     }
   }

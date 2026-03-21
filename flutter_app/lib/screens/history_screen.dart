@@ -93,7 +93,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           if (isActive) {
                             Provider.of<BingoProvider>(context, listen: false).reloadSession(session);
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => BingoControlScreen()),
+                              MaterialPageRoute(builder: (_) => const BingoControlScreen()),
                             ).then((_) => _refreshHistory());
                           } else {
                             Navigator.of(context).push(

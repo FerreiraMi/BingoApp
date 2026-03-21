@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success && mounted) {
       // Em caso de sucesso, substitui a tela atual pela MainScreen
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => MainScreen()),
+        MaterialPageRoute(builder: (_) => const MainScreen()),
       );
     } else if (mounted) {
       // Em caso de erro, mostra uma mensagem para o usuário
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => RegisterScreen()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
                   },
                   child: const Text('Não tem uma conta? Registre-se'),
                 ),
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: const Text('Acompanhar uma sessão como convidado'),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => JoinSessionScreen()),
+                      MaterialPageRoute(builder: (_) => const JoinSessionScreen()),
                     );
                   },
                 )

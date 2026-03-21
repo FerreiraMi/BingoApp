@@ -19,10 +19,10 @@ class _MainScreenState extends State<MainScreen> {
 
   // Lista de telas para cada aba
   static final List<Widget> _widgetOptions = <Widget>[
-    HistoryScreen(),
-    CreateSessionScreen(),
-    JoinSessionScreen(), // Adicionamos a nova tela aqui
-    ProfileScreen(),
+    const HistoryScreen(),
+    const CreateSessionScreen(),
+    const JoinSessionScreen(), // Adicionamos a nova tela aqui
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

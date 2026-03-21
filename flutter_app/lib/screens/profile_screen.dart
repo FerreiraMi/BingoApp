@@ -44,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 authProvider.logout();
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
                   (route) => false,
                 );
               },
