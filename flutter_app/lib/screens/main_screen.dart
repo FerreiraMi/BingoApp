@@ -3,9 +3,9 @@ import 'package:bingou/screens/create_session_screen.dart';
 import 'package:bingou/screens/history_screen.dart';
 import 'package:bingou/screens/join_session_screen.dart'; // Importe a tela de "entrar na sessão"
 import 'package:bingou/screens/profile_screen.dart';
-import 'package:provider/provider.dart'; // Importe para a lógica do provider
-import 'package:bingou/providers/bingo_provider.dart'; // Importe o bingo provider
-import 'package:bingou/screens/bingo_control_screen.dart'; // Importe a tela de controle
+// Importe para a lógica do provider
+// Importe o bingo provider
+// Importe a tela de controle
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

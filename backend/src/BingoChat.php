@@ -20,15 +20,22 @@ class BingoChat implements MessageComponentInterface {
     // Mapeamento: shortId <=> _id
     private $sessionMap;
 
-    public function __construct() {
-        require __DIR__ . '/../config/bootstrap.php';
-        
+    /**
+     * @param \MongoDB\Database|null $database Banco injetável; se null usa o bootstrap de produção.
+     */
+    public function __construct($database = null) {
         $this->clients = new \SplObjectStorage;
         $this->connectionData = [];
         $this->sessionViewers = [];
-        $this->sessionMap = []; // <-- MUDANÇA: Inicializa o novo array
+        $this->sessionMap = [];
 
-        $this->db = $client->selectDatabase('bingo_db');
+        if ($database !== null) {
+            $this->db = $database;
+        } else {
+            require __DIR__ . '/../config/bootstrap.php';
+            $this->db = $client->selectDatabase('bingo_db');
+        }
+
         $this->logMessage("Servidor WebSocket iniciado.", null);
     }
 
@@ -66,9 +73,10 @@ class BingoChat implements MessageComponentInterface {
                     if ($sessionDoc) {
                         $shortId = $sessionDoc['shortId'];
                         $this->connectionData[$resourceId]['shortId'] = $shortId;
-                        $this->connectionData[$resourceId]['isOperator'] = true; // Marca como operador
-                        $this->sessionMap[$shortId] = new ObjectId($longSessionId); // Adiciona ao mapa para otimização
-                        $this->connectionData[$resourceId]['userId'] = $userId; // <-- MUDANÇA: Armazena o ID do operador
+                        $this->connectionData[$resourceId]['isOperator'] = true;
+                        $this->connectionData[$resourceId]['sessionId'] = (string)$longSessionId; // para broadcastToSession
+                        $this->sessionMap[$shortId] = new ObjectId($longSessionId);
+                        $this->connectionData[$resourceId]['userId'] = $userId;
 
                         $this->logMessage("Operador autenticado com sucesso para a sessão {$longSessionId}/{$shortId}", $from);
                     } else {
@@ -87,15 +95,13 @@ class BingoChat implements MessageComponentInterface {
                     break;
 
                 case 'viewer_joined':
-                    // Sua lógica original aqui está correta e permanece a mesma
-                    
-                    $shortId = $data['shortId'];
-                    $sessionId   = $this->getLongIdFromShortId($shortId);
+                    $shortId    = $data['shortId'];
+                    $sessionId  = $this->getLongIdFromShortId($shortId);
                     $viewerName = $data['viewerName'];
-                
 
-                    $this->connectionData[$resourceId]['shortId'] = $shortId;
-                    $this->connectionData[$resourceId]['sessionId'] = $sessionId;
+                    $this->connectionData[$resourceId]['shortId']    = $shortId;
+                    $this->connectionData[$resourceId]['sessionId']  = $sessionId;
+                    $this->connectionData[$resourceId]['viewerName'] = $viewerName; // necessário para onClose remover corretamente
 
                     if (!isset($this->sessionViewers[$sessionId])) { $this->sessionViewers[$sessionId] = []; }
                     $this->sessionViewers[$sessionId][$resourceId] = $viewerName;
@@ -111,18 +117,35 @@ class BingoChat implements MessageComponentInterface {
                     $this->broadcastToSession($targetShortId, json_encode($data));
                     break;
                     
+                case 'session_settings':
+                    if (!($this->connectionData[$resourceId]['isOperator'] ?? false)) {
+                        $this->logMessage("ERRO: session_settings de conexão não autorizada.", $from);
+                        return;
+                    }
+                    $longSessionId = $this->connectionData[$resourceId]['sessionId'] ?? null;
+                    if ($longSessionId) {
+                        $this->logMessage("Configurações da sessão atualizadas para {$longSessionId}.", $from);
+                        $this->broadcastToSession($longSessionId, json_encode($data));
+                    }
+                    break;
+
                 case 'bingo_called':
-                    // Sua lógica original aqui está correta e permanece a mesma
                     $longSessionId = $data['sessionId'];
                     $winners = $data['winners'] ?? [];
-                    $shortId = $this->getShortIdFromLongId($longSessionId);
-                    if ($shortId) {
-                        if (!empty($winners)) {
-                            $this->db->sessions->updateOne(['_id' => new ObjectId($longSessionId)], ['$set' => ['winners' => $winners]]);
+                    if (!empty($winners)) {
+                        try {
+                            $this->db->sessions->updateOne(
+                                ['_id' => new ObjectId($longSessionId)],
+                                ['$set' => ['winners' => $winners]]
+                            );
+                        } catch (\Exception $dbEx) {
+                            $this->logMessage("AVISO: Não foi possível salvar ganhadores no DB: {$dbEx->getMessage()}", $from);
                         }
-                        $this->logMessage("Bingo chamado para sessão {$longSessionId}/{$shortId} por: " . implode(', ', $winners), $from);
-                        $this->broadcastToSession($longSessionId, json_encode(['type' => 'bingo_called', 'winners' => $winners]));
                     }
+                    $shortId = $this->getShortIdFromLongId($longSessionId) ?? '?';
+                    $this->logMessage("Bingo chamado para sessão {$longSessionId}/{$shortId} por: " . implode(', ', $winners), $from);
+                    // Broadcast direto pelo longId sem depender do shortId
+                    $this->broadcastToSession($longSessionId, json_encode(['type' => 'bingo_called', 'winners' => $winners]));
                     break;
 
                 case 'new_number':
@@ -220,7 +243,7 @@ class BingoChat implements MessageComponentInterface {
     private function getLongIdFromShortId($shortId) {
         foreach ($this->sessionMap as $short => $long) {
             if ((string)$short === (string)$shortId) {
-                return $long;
+                return (string)$long;   // sempre string para broadcastToSession funcionar
             }
         }
         $sessionDoc = $this->db->sessions->findOne(['shortId' => $shortId], ['projection' => ['_id' => 1]]);

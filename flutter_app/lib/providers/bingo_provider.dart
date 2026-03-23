@@ -12,7 +12,7 @@ enum WebSocketStatus { disconnected, connecting, connected, reconnecting }
 
 class BingoProvider with ChangeNotifier {
   String? sessionId;
-  String? shortSessionId; 
+  String? shortSessionId;
   String? _currentUserId;
 
   String? sessionName;
@@ -22,13 +22,33 @@ class BingoProvider with ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  // <-- MUDANÇA: Variáveis para gerenciar o estado e a reconexão do WebSocket
+  // Configurações da sessão
+  bool showOnlinePlayers = false;
+  bool showProbability = true;
+  List<String> probabilityModes = ['horizontal'];
+
+  // Jogadores online em tempo real (atualizados via WebSocket)
+  List<String> onlineViewers = [];
+
+  // Estado de bingo chamado
+  bool bingoCalled = false;
+  List<String> bingoWinners = [];
+
+  // Cliente HTTP injetável (facilita testes unitários)
+  final http.Client _httpClient;
+
+  BingoProvider() : _httpClient = http.Client();
+
+  /// Construtor alternativo para testes: injeta um cliente HTTP mockado.
+  BingoProvider.withHttpClient(this._httpClient);
+
+  // Variáveis para gerenciar o estado e a reconexão do WebSocket
   WebSocketChannel? _channel;
   WebSocketStatus _connectionStatus = WebSocketStatus.disconnected;
   Timer? _reconnectionTimer;
   int _reconnectAttempts = 0;
 
-  // <-- MUDANÇA: Getter público para a UI reagir ao status
+  // Getter público para a UI reagir ao status
   WebSocketStatus get connectionStatus => _connectionStatus;
 
   void setIsProUser(bool isPro) {
@@ -44,7 +64,7 @@ class BingoProvider with ChangeNotifier {
 
     final url = Uri.parse('${AppConstants.API_URL}/session');
     try {
-      final response = await http.post(
+      final response = await _httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
@@ -118,11 +138,25 @@ class BingoProvider with ChangeNotifier {
           'sessionId': sessionId,
           'userId': _currentUserId,
         });
+        // Envia as configurações iniciais após autenticação
+        Future.delayed(const Duration(milliseconds: 300), _sendSettings);
       });
 
       // Ouve por eventos do canal
       _channel!.stream.listen(
-        (message) { /* Lógica para mensagens do servidor, se houver */ },
+        (message) {
+          try {
+            final data = json.decode(message as String) as Map<String, dynamic>;
+            if (data['type'] == 'viewer_list_update') {
+              onlineViewers = List<String>.from(data['viewers'] ?? []);
+              notifyListeners();
+            } else if (data['type'] == 'bingo_called') {
+              bingoCalled = true;
+              bingoWinners = List<String>.from(data['winners'] ?? []);
+              notifyListeners();
+            }
+          } catch (_) {}
+        },
         onDone: () {
           print("WebSocket: Conexão encerrada. Iniciando reconexão.");
           _handleDisconnection();
@@ -197,11 +231,64 @@ class BingoProvider with ChangeNotifier {
   }
 
   void callBingo({required List<String> winners}) {
+    // Atualiza o estado local imediatamente (otimista)
+    bingoCalled = true;
+    bingoWinners = List.from(winners);
+    notifyListeners();
     _sendWebSocketMessage({
       'type': 'bingo_called',
       'sessionId': sessionId,
       'winners': winners,
     });
+  }
+
+  void clearBingo() {
+    bingoCalled = false;
+    bingoWinners = [];
+    notifyListeners();
+  }
+
+  /// Atualiza as configurações da sessão e as envia ao display via WebSocket.
+  void updateSettings({
+    bool? showOnlinePlayers,
+    bool? showProbability,
+    List<String>? probabilityModes,
+  }) {
+    if (showOnlinePlayers != null) this.showOnlinePlayers = showOnlinePlayers;
+    if (showProbability != null) this.showProbability = showProbability;
+    if (probabilityModes != null) this.probabilityModes = probabilityModes;
+    notifyListeners();
+    _sendSettings();
+  }
+
+  void _sendSettings() {
+    _sendWebSocketMessage({
+      'type': 'session_settings',
+      'sessionId': sessionId,
+      'showViewers': showOnlinePlayers,
+      'showProbability': showProbability,
+      'probabilityModes': probabilityModes,
+    });
+  }
+
+  /// Vincula a sessão ativa a um display token gerado pelo navegador.
+  /// Retorna true se o vínculo foi realizado com sucesso.
+  Future<bool> linkToDisplay(String displayCode) async {
+    if (shortSessionId == null) return false;
+    final url = Uri.parse('${AppConstants.API_URL}/display_token');
+    try {
+      final response = await _httpClient.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'code': displayCode.trim().toUpperCase(),
+          'sessionShortId': shortSessionId,
+        }),
+      );
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
   }
 
   // <-- MUDANÇA: reset agora limpa também os recursos de reconexão
@@ -219,6 +306,9 @@ class BingoProvider with ChangeNotifier {
     availableNumbers = List.generate(75, (i) => i + 1);
     isLoading = false;
     errorMessage = null;
+    onlineViewers = [];
+    bingoCalled = false;
+    bingoWinners = [];
   }
 
   void reloadSession(Map<String, dynamic> sessionData) {

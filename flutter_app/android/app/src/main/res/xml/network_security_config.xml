@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Permite tráfego HTTP (cleartext) apenas para IPs de desenvolvimento local.
+    Em produção este arquivo não existe — o app usa HTTPS normalmente.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- IP local da máquina de desenvolvimento (Docker host) -->
+        <domain includeSubdomains="false">192.168.2.198</domain>
+        <!-- Loopback, útil para emulador iOS e testes -->
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <!-- Alias do host no emulador Android -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

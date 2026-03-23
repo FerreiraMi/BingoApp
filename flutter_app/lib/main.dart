@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:bingou/providers/auth_provider.dart';
 import 'package:bingou/providers/bingo_provider.dart';
-import 'package:bingou/screens/history_screen.dart';
 import 'package:bingou/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:bingou/screens/main_screen.dart';

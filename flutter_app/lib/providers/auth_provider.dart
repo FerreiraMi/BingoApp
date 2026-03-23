@@ -12,6 +12,13 @@ class AuthProvider with ChangeNotifier {
   String? errorMessage;
   List<dynamic> history = [];
 
+  final http.Client _httpClient;
+
+  AuthProvider() : _httpClient = http.Client();
+
+  /// Construtor para testes: injeta cliente HTTP mockado.
+  AuthProvider.withHttpClient(this._httpClient);
+
   bool get isLoggedIn => _userId != null;
   String? get userId => _userId;
   String? get userEmail => _userEmail;
@@ -32,7 +39,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('${AppConstants.API_URL}/$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
@@ -93,7 +100,7 @@ class AuthProvider with ChangeNotifier {
     //notifyListeners();
 
     try {
-      final response = await http.get(
+      final response = await _httpClient.get(
         Uri.parse('${AppConstants.API_URL}/history?userId=$_userId'),
       );
       if (response.statusCode == 200) {

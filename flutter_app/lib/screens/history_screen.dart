@@ -29,8 +29,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   // Função para ser chamada pelo RefreshIndicator ou outras ações
   Future<void> _refreshHistory() async {
-    // Usamos setState aqui para notificar o widget que o Future mudou e
-    // o FutureBuilder precisa ser reconstruído com a nova instância do Future.
+    if (!mounted) return;
     setState(() {
       _historyFuture = Provider.of<AuthProvider>(context, listen: false).fetchHistory();
     });
