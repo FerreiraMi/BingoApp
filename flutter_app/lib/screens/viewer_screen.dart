@@ -9,10 +9,10 @@ class ViewerScreen extends StatefulWidget {
   final String shortId;
   const ViewerScreen({Key? key, required this.shortId}) : super(key: key);
   @override
-  _ViewerScreenState createState() => _ViewerScreenState();
+  ViewerScreenState createState() => ViewerScreenState();
 }
 
-class _ViewerScreenState extends State<ViewerScreen> {
+class ViewerScreenState extends State<ViewerScreen> {
   WebSocketChannel? _channel;
   StreamSubscription? _socketSubscription;
 
@@ -72,7 +72,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
     setState(() => _isLoading = true);
     try {
       final response = await http.get(
-        Uri.parse('${AppConstants.API_URL}/session?shortId=${widget.shortId}'),
+        Uri.parse('${AppConstants.apiUrl}/session?shortId=${widget.shortId}'),
       );
       if (response.statusCode == 200) {
         if (mounted) {
@@ -94,7 +94,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
   void _connectWebSocket() {
     if (_sessionData == null) return;
     try {
-      _channel = WebSocketChannel.connect(Uri.parse(AppConstants.WEBSOCKET_URL));
+      _channel = WebSocketChannel.connect(Uri.parse(AppConstants.webSocketUrl));
       _socketSubscription = _channel!.stream.listen(
         (message) {
           final data = json.decode(message);
@@ -126,7 +126,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
   // ===============================================
   // NOVO MÉTODO PARA CHAMAR O BINGO
   // ===============================================
-  void _callBingo() {
+  void callBingo() {
     if (_channel != null) {
       // O backend espera o ID longo para salvar os ganhadores.
       // Precisamos enviar o ID longo da sessão.

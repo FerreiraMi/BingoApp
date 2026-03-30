@@ -10,10 +10,10 @@ class CreateSessionScreen extends StatefulWidget {
   const CreateSessionScreen({super.key, this.oldSessionId});
 
   @override
-  _CreateSessionScreenState createState() => _CreateSessionScreenState();
+  CreateSessionScreenState createState() => CreateSessionScreenState();
 }
 
-class _CreateSessionScreenState extends State<CreateSessionScreen> {
+class CreateSessionScreenState extends State<CreateSessionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController(text: 'Bingo da Família');
   final _roundController = TextEditingController(text: '1');

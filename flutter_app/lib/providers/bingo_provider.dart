@@ -62,7 +62,7 @@ class BingoProvider with ChangeNotifier {
     _currentUserId = userId; // Armazena o ID do usuário atual
     notifyListeners();
 
-    final url = Uri.parse('${AppConstants.API_URL}/session');
+    final url = Uri.parse('${AppConstants.apiUrl}/session');
     try {
       final response = await _httpClient.post(
         url,
@@ -86,7 +86,7 @@ class BingoProvider with ChangeNotifier {
         _initiateWebSocketConnection();
 
         if (oldSessionId != null) {
-          final newUrl = '${AppConstants.WEB_PAGE_URL}/$shortSessionId'; 
+          final newUrl = '${AppConstants.webPageUrl}/$shortSessionId'; 
           Future.delayed(const Duration(milliseconds: 500), () {
              _sendWebSocketMessage({
                 'type': 'redirect',
@@ -94,7 +94,7 @@ class BingoProvider with ChangeNotifier {
                 'newUrl': newUrl,
              });
           });
-          print("Comando de redirect agendado.");
+          debugPrint("Comando de redirect agendado.");
         }
 
         isLoading = false;
@@ -127,12 +127,12 @@ class BingoProvider with ChangeNotifier {
 
     try {
       _channel = WebSocketChannel.connect(
-        Uri.parse(AppConstants.WEBSOCKET_URL),
+        Uri.parse(AppConstants.webSocketUrl),
       );
 
       // Autentica o operador assim que a conexão estiver pronta
       _channel!.ready.then((_) {
-        print("WebSocket pronto. Autenticando operador...");
+        debugPrint("WebSocket pronto. Autenticando operador...");
         _sendWebSocketMessage({
           'type': 'authenticate_operator',
           'sessionId': sessionId,
@@ -158,11 +158,11 @@ class BingoProvider with ChangeNotifier {
           } catch (_) {}
         },
         onDone: () {
-          print("WebSocket: Conexão encerrada. Iniciando reconexão.");
+          debugPrint("WebSocket: Conexão encerrada. Iniciando reconexão.");
           _handleDisconnection();
         },
         onError: (error) {
-          print("WebSocket: Erro - $error. Iniciando reconexão.");
+          debugPrint("WebSocket: Erro - $error. Iniciando reconexão.");
           _handleDisconnection();
         },
         cancelOnError: true,
@@ -170,9 +170,9 @@ class BingoProvider with ChangeNotifier {
 
       _updateStatus(WebSocketStatus.connected);
       _reconnectAttempts = 0;
-      print("WebSocket: Conectado com sucesso à sessão $sessionId");
+      debugPrint("WebSocket: Conectado com sucesso à sessão $sessionId");
     } catch (e) {
-      print("WebSocket: Falha ao tentar conectar - $e");
+      debugPrint("WebSocket: Falha ao tentar conectar - $e");
       _handleDisconnection();
     }
   }
@@ -186,7 +186,7 @@ class BingoProvider with ChangeNotifier {
     _reconnectAttempts++;
     final delayInSeconds = min(pow(2, _reconnectAttempts), 30).toInt();
     
-    print("WebSocket: Agendando reconexão em $delayInSeconds segundos (tentativa #$_reconnectAttempts)...");
+    debugPrint("WebSocket: Agendando reconexão em $delayInSeconds segundos (tentativa #$_reconnectAttempts)...");
     _reconnectionTimer = Timer(Duration(seconds: delayInSeconds), _initiateWebSocketConnection);
   }
 
@@ -202,7 +202,7 @@ class BingoProvider with ChangeNotifier {
       _channel!.sink.add(json.encode(message));
       return true;
     } else {
-      print("Aviso: Não foi possível enviar a mensagem. WebSocket não está conectado. Status: $_connectionStatus");
+      debugPrint("Aviso: Não foi possível enviar a mensagem. WebSocket não está conectado. Status: $_connectionStatus");
       errorMessage = "Não foi possível sortear. Verifique a conexão com a internet."; // Define uma mensagem de erro
       notifyListeners(); // Notifica a UI sobre o erro
       return false; // F      return false;
@@ -275,7 +275,7 @@ class BingoProvider with ChangeNotifier {
   /// Retorna true se o vínculo foi realizado com sucesso.
   Future<bool> linkToDisplay(String displayCode) async {
     if (shortSessionId == null) return false;
-    final url = Uri.parse('${AppConstants.API_URL}/display_token');
+    final url = Uri.parse('${AppConstants.apiUrl}/display_token');
     try {
       final response = await _httpClient.put(
         url,
@@ -326,10 +326,10 @@ class BingoProvider with ChangeNotifier {
 
   Future<void> finishCurrentSession() async {
     if (sessionId == null) return;
-    print("finish CurrentSession $sessionId.");
+    debugPrint("finish CurrentSession $sessionId.");
     try {
       await http.post(
-        Uri.parse('${AppConstants.API_URL}/finish_session'),
+        Uri.parse('${AppConstants.apiUrl}/finish_session'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'sessionId': sessionId}),
       );

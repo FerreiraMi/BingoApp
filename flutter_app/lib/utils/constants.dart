@@ -26,7 +26,7 @@ class AppConstants {
   static const String _apiBase = _env == 'local' ? _localApiBase : _prodApiBase;
   static const String _wsBase  = _env == 'local' ? _localWsBase  : _prodWsBase;
 
-  static const String API_URL       = "$_apiBase/api";
-  static const String WEB_PAGE_URL  = "$_apiBase/bingo";
-  static const String WEBSOCKET_URL = _wsBase;
+  static const String apiUrl = "$_apiBase/api";
+  static const String webPageUrl  = "$_apiBase/bingo";
+  static const String webSocketUrl = _wsBase;
 }

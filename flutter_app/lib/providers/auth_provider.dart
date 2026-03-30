@@ -40,7 +40,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final response = await _httpClient.post(
-        Uri.parse('${AppConstants.API_URL}/$endpoint'),
+        Uri.parse('${AppConstants.apiUrl}/$endpoint'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
       );
@@ -101,7 +101,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final response = await _httpClient.get(
-        Uri.parse('${AppConstants.API_URL}/history?userId=$_userId'),
+        Uri.parse('${AppConstants.apiUrl}/history?userId=$_userId'),
       );
       if (response.statusCode == 200) {
         history = json.decode(response.body);

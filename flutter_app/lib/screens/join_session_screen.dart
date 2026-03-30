@@ -7,10 +7,10 @@ class JoinSessionScreen extends StatefulWidget {
   const JoinSessionScreen({super.key});
 
   @override
-  _JoinSessionScreenState createState() => _JoinSessionScreenState();
+JoinSessionScreenState createState() => JoinSessionScreenState();
 }
 
-class _JoinSessionScreenState extends State<JoinSessionScreen> {
+class JoinSessionScreenState extends State<JoinSessionScreen> {
   final _shortIdController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 

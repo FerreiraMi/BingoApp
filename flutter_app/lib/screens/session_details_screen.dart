@@ -8,7 +8,7 @@ class SessionDetailsScreen extends StatelessWidget {
   const SessionDetailsScreen({Key? key, required this.session}) : super(key: key);
 
   // Função auxiliar para obter a letra de um número (reutilizada aqui)
-  String _getBingoLetter(int number) {
+  String getBingoLetter(int number) {
     if (number >= 1 && number <= 15) return 'B';
     if (number >= 16 && number <= 30) return 'I';
     if (number >= 31 && number <= 45) return 'N';

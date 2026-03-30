@@ -85,7 +85,7 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
     final codeController = TextEditingController();
     bool isLinking = false;
     final displayUrl = bingoProvider.shortSessionId != null
-        ? '${AppConstants.WEB_PAGE_URL}/${bingoProvider.shortSessionId}'
+        ? '${AppConstants.webPageUrl}/${bingoProvider.shortSessionId}'
         : null;
 
     showDialog(
@@ -216,16 +216,20 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
   Widget build(BuildContext context) {
     final bingoProvider = Provider.of<BingoProvider>(context, listen: false);
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) async {
-        if (didPop) return;
-        final confirmed = await _showFinishConfirmationDialog();
-        if (confirmed && mounted) {
-          await bingoProvider.finishCurrentSession();
-          bingoProvider.reset();
-          if (mounted) Navigator.of(context).pop();
-        }
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) async {
+          if (didPop) return;
+          final (navigator) = Navigator.of(context);
+
+          final confirmed = await _showFinishConfirmationDialog();
+
+          if (!mounted) return; 
+          if (confirmed) {
+            await bingoProvider.finishCurrentSession();
+            bingoProvider.reset();
+            navigator.pop();
+          }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -260,25 +264,34 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
                 onDismiss: () => provider.clearBingo(),
                 onFinish: () async {
                   provider.clearBingo();
+                  final navigator = Navigator.of(context);
                   final confirmed = await _showFinishConfirmationDialog();
-                  if (confirmed && mounted) {
+                  if (!mounted) return;
+                  if (confirmed) {
                     await provider.finishCurrentSession();
                     provider.reset();
-                    if (mounted) Navigator.of(context).pop();
+                    navigator.pop();
                   }
                 },
                 onNewSession: () async {
                   provider.clearBingo();
+                  final navigator = Navigator. of(context);
                   final confirmed = await _showFinishConfirmationDialog();
-                  if (confirmed && mounted) {
+                  if (!mounted) return;
+                  if (confirmed) {
                     final oldId = provider.sessionId;
                     await provider.finishCurrentSession();
                     provider.reset();
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => CreateSessionScreen(oldSessionId: oldId)));
+                    navigator.pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) => CreateSessionScreen(oldSessionId: oldId,
+                        ),
+                      ),
+                    );
                   }
-                },
+                },  
               );
-            }
+            } 
             return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -390,11 +403,13 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)),
                       onPressed: () async {
+                        final navigator = Navigator.of(context);
                         final confirmed = await _showFinishConfirmationDialog();
-                        if (confirmed && mounted) {
+                        if (!mounted) return;
+                        if (confirmed) {
                           await bingoProvider.finishCurrentSession();
                           bingoProvider.reset();
-                          Navigator.of(context).pop();
+                          navigator.pop();
                         }
                       },
                       child: const Text('Encerrar Sessão'),
@@ -404,12 +419,16 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
+                        final navigator = Navigator.of(context);
                         final confirmed = await _showFinishConfirmationDialog();
-                        if (confirmed && mounted) {
+                        if (!mounted) return;
+                        if (confirmed){
                           final oldId = bingoProvider.sessionId;
                           await bingoProvider.finishCurrentSession();
                           bingoProvider.reset();
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => CreateSessionScreen(oldSessionId: oldId)));
+                          navigator.pushReplacement(
+                            MaterialPageRoute(
+                              builder: (_) => CreateSessionScreen(oldSessionId: oldId)));
                         }
                       },
                       child: const Text('Iniciar Nova'),
@@ -665,9 +684,9 @@ class _SessionSettingsSheetState extends State<_SessionSettingsSheet> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.indigo.withOpacity(0.07),
+                        color: Colors.indigo.withValues(alpha:0.7),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.indigo.withOpacity(0.2)),
+                        border: Border.all(color: Colors.indigo.withValues(alpha:0.2)),
                       ),
                       child: Row(
                         children: [
@@ -836,9 +855,9 @@ class _OnlinePlayersList extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.indigo.withOpacity(0.06),
+        color: Colors.indigo.withValues(alpha:0.06),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.indigo.withOpacity(0.15)),
+        border: Border.all(color: Colors.indigo.withValues(alpha:0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
