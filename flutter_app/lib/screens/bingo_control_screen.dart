@@ -357,6 +357,41 @@ class _BingoControlScreenState extends State<BingoControlScreen> {
                 selector: (ctx, provider) => provider.drawnNumbers.isNotEmpty ? provider.drawnNumbers.last : null,
                 builder: (ctx, lastNumber, _) => Text('${lastNumber ?? '-'}', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
               ),
+
+//<-- MUDANÇA: patrocinador 
+              Consumer<BingoProvider>(
+  builder: (context, provider, _) {
+    final sponsor = provider.currentSponsor;
+
+    if (sponsor == null) return const SizedBox();
+
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        const Text(
+          "Patrocinador deste número:",
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+        const SizedBox(height: 8),
+        Image.network(
+  sponsor.image,
+  height: 80,
+  errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
+),
+        const SizedBox(height: 5),
+        Text(
+          sponsor.name,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+      ],
+    );
+  },
+),
+
               const SizedBox(height: 6),
               Selector<BingoProvider, int>(
                 selector: (ctx, provider) => provider.availableNumbers.length,

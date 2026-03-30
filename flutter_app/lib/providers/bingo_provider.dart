@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:bingou/utils/constants.dart';
+import 'package:bingou/models/sponsor.dart';
 
 // <-- MUDANÇA: Enum para gerenciar o estado da conexão
 enum WebSocketStatus { disconnected, connecting, connected, reconnecting }
@@ -21,6 +22,30 @@ class BingoProvider with ChangeNotifier {
   bool _isProUser = false;
   bool isLoading = false;
   String? errorMessage;
+
+  List<Sponsor> sponsors = [];
+  Sponsor? currentSponsor;
+
+  // <-- MUDANÇA: Adionar patrocinador
+  void addSponsor(Sponsor sponsor) {
+  if (sponsors.any((s) => s.number == sponsor.number)) {
+    errorMessage = "Número já escolhido por outro patrocinador";
+    notifyListeners();
+    return;
+  }
+
+  sponsors.add(sponsor);
+  notifyListeners();
+}
+
+//<-- MUDANÇA: Busca patrocinador pelo número
+Sponsor? getSponsorByNumber(int number) {
+  try {
+    return sponsors.firstWhere((s) => s.number == number);
+  } catch (_) {
+    return null;
+  }
+}
 
   // Configurações da sessão
   bool showOnlinePlayers = false;
@@ -76,11 +101,23 @@ class BingoProvider with ChangeNotifier {
         }),
       );
       
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         sessionId = data['sessionId'];
         shortSessionId = data['shortSessionId']; 
         sessionName = name;
+
+        // 🎯 TESTE DO PATROCINADOR (AQUI SIM)
+      addSponsor(
+      Sponsor(
+        name: "Empresa Teste",
+        image: "assets/logo.png",
+        number: 10,
+      ),
+    );
+    print("Patrocinadores: ${sponsors.length}");
+print("Primeiro sponsor: ${sponsors.first.name}");
         
         // <-- MUDANÇA: Chamamos a nova função de conexão robusta
         _initiateWebSocketConnection();
@@ -210,16 +247,22 @@ class BingoProvider with ChangeNotifier {
   }
 
   bool drawNumber(int number) {
-    if (availableNumbers.contains(number)) {
-      availableNumbers.remove(number);
-      drawnNumbers.add(number);
-      errorMessage = null;
-      notifyListeners();
-      _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
-      return true;
-    }
-    return false;
+  if (availableNumbers.contains(number)) {
+    availableNumbers.remove(number);
+    drawnNumbers.add(number);
+
+    // <-- MUDANÇA: verificar patrocinador
+    currentSponsor = getSponsorByNumber(number);
+
+    errorMessage = null;
+    notifyListeners();
+
+    _sendWebSocketMessage({'sessionId': sessionId, 'number': number});
+
+    return true;
   }
+  return false;
+}
 
   bool drawRandomNumber() {
     if (availableNumbers.isNotEmpty) {
@@ -309,6 +352,9 @@ class BingoProvider with ChangeNotifier {
     onlineViewers = [];
     bingoCalled = false;
     bingoWinners = [];
+    //<-- MUDANÇA: reset patrocinadores
+    sponsors = [];
+    currentSponsor = null;
   }
 
   void reloadSession(Map<String, dynamic> sessionData) {
