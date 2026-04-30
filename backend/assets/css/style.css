@@ -1,0 +1,5 @@
+/* Custom styles for Bingou! */
+body{scroll-behavior:smooth;font-family:'Lato',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji';}
+.hero-section{background:#0d1b2a;padding-top:100px;padding-bottom:60px;}
+.divider{border-top:3px solid #0d6efd;width:120px;margin:16px auto;}
+.price-tag h3{margin:0;}
