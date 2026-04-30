@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Se não for um arquivo ou diretório existente e se existir um arquivo com a extensão .php, redireciona
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
